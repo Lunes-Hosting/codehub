@@ -20,3 +20,5 @@ DATABASE = os.getenv('MYSQL_DATABASE')
 # Application configuration
 SECRET_KEY = os.getenv('SECRET_KEY')
 DASHBOARD_URL = os.getenv('DASHBOARD_URL')
+PTERODACTYL_URL = os.getenv('PTERODACTYL_URL')
+PTERODACTYL_ADMIN_KEY = os.getenv('PTERODACTYL_ADMIN_KEY')

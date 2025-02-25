@@ -3,3 +3,6 @@ mysql-connector-python==8.2.0
 python-dotenv==1.0.0
 werkzeug==3.0.1
 bcrypt==4.1.2
+flask-wtf==1.2.2
+markdown
+requests

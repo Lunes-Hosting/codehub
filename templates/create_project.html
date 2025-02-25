@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Project</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Function to dynamically update the variables based on the selected egg
+        function updateVariables() {
+            var selectedEggId = $('#egg-dropdown').val();
+            $.ajax({
+                url: '/get_egg_variables',  // Call the new route for egg variables
+                method: 'POST',
+                data: { egg: selectedEggId },
+                success: function(response) {
+                    // Clear previous variables
+                    $('#variables-container').empty();
+                    
+                    // Add the new variables dynamically
+                    var variables = response.egg_variables;
+                    
+                    if (variables && variables.length > 0) {
+                        variables.forEach(function(variable) {
+                            var varName = variable['attributes']['env_variable']; // Correct way to access the variable name
+                            var label = variable['attributes']['name']; // Display name
+                            var defaultValue = variable['attributes']['default_value']; // Default value if needed
+
+                            var variableInput = `<label>${label}</label><br>
+                                                <input type="text" name="variable_${varName}" class="form-control" value="${defaultValue}" /><br>`;
+                            $('#variables-container').append(variableInput);
+                        });
+                    }
+                     else {
+                        $('#variables-container').append('<p>No variables for this egg.</p>');
+                    }
+                },
+                error: function() {
+                    $('#variables-container').empty();
+                    $('#variables-container').append('<p>Error retrieving egg variables.</p>');
+                }
+            });
+        }
+    </script>
+    
+    
+    
+</head>
+<body>
+    <h2>Create Project</h2>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <p style="color: green;">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+        {{ form.hidden_tag() }}
+
+        <p>
+            {{ form.name.label }}<br>
+            {{ form.name() }}<br>
+            {% for error in form.name.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+        </p>
+        
+        <p>
+            {{ form.github_link.label }}<br>
+            {{ form.github_link() }}<br>
+            {% for error in form.github_link.errors %}
+                <span style="color: red;">{{ error }}</span><br>
+            {% endfor %}
+        </p>
+
+        <!-- Dropdown for Available Eggs -->
+        <p>
+            <label for="egg-dropdown">Select Egg:</label><br>
+            <select id="egg-dropdown" name="egg" class="form-control" onchange="updateVariables()">
+                <option value="">-- Select an Egg --</option>
+                {% for egg in available_eggs %}
+                    <option value="{{ egg['attributes']['id'] }}">{{ egg['attributes']['name'] }}</option>
+                {% endfor %}
+            </select>
+        </p>
+
+        <!-- Container to dynamically show variables -->
+        <div id="variables-container">
+            {% for variable in egg_variables %}
+                <label>{{ variable['attributes']['name'] }}</label><br>
+                <p>Debug: {{ variable['attributes'].get('description', 'No description available') }}</p>
+                <input 
+                    type="text" 
+                    name="variable_{{ variable['attributes']['env_variable'] }}" 
+                    class="form-control"
+                    placeholder="test"
+                    {% if "nullable" not in variable['attributes']['rules'] %} required {% endif %}
+                /><br>
+            {% endfor %}
+        </div>
+        
+        
+
+        <p>{{ form.submit() }}</p>
+    </form>
+</body>
+</html>

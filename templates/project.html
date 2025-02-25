@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ project['name'] }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+    <style>
+        /* Container with max-width to avoid stretching across the entire page */
+        .readme-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f6f8fa;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+    
+        /* Content area with padding and readable font */
+        .readme-content {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            font-size: 16px;
+            color: #24292f;
+        }
+    
+        /* Style headers to look like GitHub */
+        .readme-content h1,
+        .readme-content h2,
+        .readme-content h3 {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+    
+        .readme-content h1 {
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+        }
+    
+        .readme-content h2 {
+            margin-top: 30px;
+            margin-bottom: 10px;
+        }
+    
+        .readme-content h3 {
+            margin-top: 20px;
+            margin-bottom: 5px;
+        }
+    
+        /* Lists style */
+        .readme-content ul,
+        .readme-content ol {
+            margin-left: 20px;
+        }
+    
+        .readme-content li {
+            margin-bottom: 10px;
+        }
+    
+        /* Links style */
+        .readme-content a {
+            color: #0366d6;
+            text-decoration: none;
+        }
+    
+        .readme-content a:hover {
+            text-decoration: underline;
+        }
+    
+        /* Blockquote style */
+        .readme-content blockquote {
+            border-left: 4px solid #ddd;
+            padding-left: 15px;
+            margin: 20px 0;
+            font-style: italic;
+            color: #6a737d;
+        }
+    
+        /* Code style */
+        .readme-content pre,
+        .readme-content code {
+            background-color: #f6f8fa;
+            color: #24292f;
+            font-family: 'Courier New', monospace;
+            border-radius: 3px;
+            padding: 2px 4px;
+        }
+    
+        .readme-content pre {
+            padding: 15px;
+            overflow-x: auto;
+        }
+    
+        /* Styling for the Edit button */
+        .btn-warning {
+            margin-top: 20px;
+        }
+        .readme-content img {
+            max-width: 100%;  /* Ensures the image doesn't exceed the container width */
+            height: auto;     /* Keeps the aspect ratio */
+            display: block;   /* Prevents inline elements like images from causing line breaks */
+            margin: 0 auto;   /* Centers the image */
+        }
+    </style>
+</head>
+<body>
+    {% include 'navbar.html' %}
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- View Mode: Display Project Details -->
+    <h1>{{ project['name'] }}</h1>
+    <a href="{{ project['github_link'] }}" target="_blank">Source code</a>
+    <br>
+
+    <!-- Project Description Section -->
+    <div id="view-mode">
+        <div class="readme-container">
+            <div class="readme-content">
+                {{ project_description_html | safe }}
+            </div>
+        </div>
+    
+        {% if is_owner %}
+            <button class="btn btn-warning" onclick="enableEditMode()">Edit</button>
+        {% endif %}
+    </div>
+
+    <!-- Hidden Edit Form (Shown Only When Edit Mode is Active) -->
+    {% if is_owner %}
+    <div id="edit-mode" style="display: none;">
+        <form method="POST">
+            <div class="form-group">
+                <label for="name">Project Name</label>
+                <input type="text" class="form-control" id="name" name="name" value="{{ project['name'] }}" required>
+            </div>
+            <div class="form-group">
+                <label for="github_link">GitHub Link</label>
+                <input type="url" class="form-control" id="github_link" name="github_link" value="{{ project['github_link'] }}" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Project Description</label>
+                <textarea id="markdown-editor" name="description" class="form-control">{{ project['description'] }}</textarea>
+            </div>
+            <br>
+            <div class="form-group">
+                <h4>Environment Variables</h4>
+                {% for key, value in env_variables.items() %}
+                    <label for="variable_{{ key }}">{{ key }}</label>
+                    <input type="text" class="form-control" id="variable_{{ key }}" name="variable_{{ key }}" value="{{ value }}">
+                {% endfor %}
+            </div>
+            
+            <button type="submit" class="btn btn-success">Save</button>
+            <button type="button" class="btn btn-secondary" onclick="disableEditMode()">Cancel</button>
+        </form>
+    </div>
+    {% endif %}
+
+    <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+    <script>
+        let editor;
+
+        function enableEditMode() {
+            document.getElementById("view-mode").style.display = "none";
+            document.getElementById("edit-mode").style.display = "block";
+
+            // Initialize Markdown editor only once
+            if (!editor) {
+                editor = new SimpleMDE({ element: document.getElementById("markdown-editor") });
+            }
+        }
+
+        function disableEditMode() {
+            document.getElementById("edit-mode").style.display = "none";
+            document.getElementById("view-mode").style.display = "block";
+        }
+    </script>
+</body>
+</html>
