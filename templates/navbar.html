@@ -2,6 +2,7 @@
     <div class="container">
         <a class="navbar-brand" href="{{ url_for('dashboard.index') }}">Lunes Code Hub</a>
         <div class="navbar-nav ms-auto">
+            <a class="nav-item nav-link" href="{{ url_for('projects.home') }}">Projects</a>
             {% if username %}
                 <span class="nav-item nav-link">Welcome, {{ username }}!</span>
                 <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>

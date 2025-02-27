@@ -95,6 +95,23 @@
         .btn-warning {
             margin-top: 20px;
         }
+        
+        /* Styling for Deploy button */
+        .deploy-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .deploy-btn:hover {
+            background-color: #218838;
+        }
+
         .readme-content img {
             max-width: 100%;  /* Ensures the image doesn't exceed the container width */
             height: auto;     /* Keeps the aspect ratio */
@@ -124,6 +141,10 @@
         <div class="readme-container">
             <div class="readme-content">
                 {{ project_description_html | safe }}
+                <!-- Deploy Me Button -->
+                <button class="deploy-btn" onclick="window.location.href='https://betadash.lunes.host/servers/create?project_id=15'">
+                    Deploy Me!
+                </button>
             </div>
         </div>
     

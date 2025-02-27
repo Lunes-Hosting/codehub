@@ -6,19 +6,32 @@
 </head>
 <body>
     {% include 'navbar.html' %}
+
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
         {% for category, message in messages %}
             <div class="alert alert-{{ category }}">{{ message }}</div>
         {% endfor %}
     {% endif %}
-{% endwith %}
-    <div id="projects">
-        {% for project in projects %}
-            <a href="{{url_for('projects.project', proj_id=project['id'])}}"><div id="project">
-                <p>{{ project['name'] }}</p>
-            </div></a>
-        {% endfor %}
+    {% endwith %}
+
+    <div class="container mt-4">
+        <!-- Create Project Button -->
+        <a href="{{ url_for('projects.create_project') }}">
+            <button class="btn btn-primary mb-4">Create Project</button>
+        </a>
+
+        <div id="projects">
+            {% for project in projects %}
+                <a href="{{ url_for('projects.project', proj_id=project['id']) }}">
+                    <div id="project" class="card mb-3">
+                        <div class="card-body">
+                            <p class="card-text">{{ project['name'] }}</p>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
     </div>
 </body>
 </html>

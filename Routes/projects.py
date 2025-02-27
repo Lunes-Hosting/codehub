@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, jsonify
 import bcrypt
 from database import DatabaseManager as db
-from config import DASHBOARD_URL, PTERODACTYL_URL, PTERODACTYL_ADMIN_KEY
+from config import DASHBOARD_URL, PTERODACTYL_URL, PTERODACTYL_ADMIN_KEY, AUTODEPLOY_NEST_ID
 from Routes.auth import login_required
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
@@ -28,7 +28,7 @@ def get_egg_variables():
         return jsonify({'error': 'No egg selected'}), 400
     
     # Fetch the available eggs and their variables
-    egg_info = requests.get(f"{PTERODACTYL_URL}/api/application/nests/23/eggs/{selected_egg_id}?include=variables", 
+    egg_info = requests.get(f"{PTERODACTYL_URL}/api/application/nests/{AUTODEPLOY_NEST_ID}/eggs/{selected_egg_id}?include=variables", 
                                   headers={"Authorization": f"Bearer {PTERODACTYL_ADMIN_KEY}"}).json()
     
     
@@ -48,11 +48,11 @@ def create_project():
     if request.method == 'POST':
         formig = request.form
         print(formig)
-        enviroment = {}
+        environment = {}
         for variable in formig:
             if variable.startswith("variable_"):
 
-                enviroment[variable.replace("variable_", "")] = request.form.get(variable)
+                environment[variable.replace("variable_", "")] = request.form.get(variable)
 
         name = request.form.get('name')
         egg_id = request.form.get("egg")
@@ -64,13 +64,13 @@ def create_project():
         else:
             flash(f"Project '{name}' created successfully!", "success")
             owner_id = user.get_id()
-            db.execute_query("INSERT INTO projects (create_time, name, owner, github_link, enviroment, egg_id) \
+            db.execute_query("INSERT INTO projects (create_time, name, owner, github_link, environment, egg_id) \
                              VALUES (%s, %s, %s, %s, %s, %s)",
-                            (datetime.datetime.now(), str(name), owner_id, github_link, json.dumps(enviroment), egg_id))
+                            (datetime.datetime.now(), str(name), owner_id, github_link, json.dumps(environment), egg_id))
             return redirect(url_for('projects.home'))  # Redirect to clear form after submission
 
     # For GET requests, fetch the available eggs
-    available_eggs = requests.get(f"{PTERODACTYL_URL}/api/application/nests/23/eggs?include=variables", 
+    available_eggs = requests.get(f"{PTERODACTYL_URL}/api/application/nests/{AUTODEPLOY_NEST_ID}/eggs?include=variables", 
                                   headers={"Authorization": f"Bearer {PTERODACTYL_ADMIN_KEY}"}).json()['data']
 
     form = ProjectForm()
@@ -90,7 +90,7 @@ def project(proj_id):
     is_owner = str(project['owner']) == str(user_id)
 
     # Load environment variables from the JSON field
-    env_variables = json.loads(project['enviroment']) if project['enviroment'] else {}
+    env_variables = json.loads(project['environment']) if project['environment'] else {}
 
     if request.method == 'POST' and is_owner:
         new_name = request.form.get("name")
@@ -106,7 +106,7 @@ def project(proj_id):
         # Update project details in the database
         db.execute_query("""
             UPDATE projects 
-            SET name = %s, github_link = %s, description = %s, enviroment = %s
+            SET name = %s, github_link = %s, description = %s, environment = %s
             WHERE id = %s
         """, (new_name, new_github_link, new_description, json.dumps(updated_env), proj_id))
 
