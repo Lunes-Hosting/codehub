@@ -73,7 +73,7 @@ def create_project():
     resp = requests.get(f"{PTERODACTYL_URL}/api/application/nests/{AUTODEPLOY_NEST_ID}/eggs?include=variables", 
                                   headers={"Authorization": f"Bearer {PTERODACTYL_ADMIN_KEY}"})
     print(f"{PTERODACTYL_URL}/api/application/nests/{AUTODEPLOY_NEST_ID}/eggs?include=variables")
-    print(resp)
+    print(resp.text)
     available_eggs = resp.json()['data']
 
     form = ProjectForm()
