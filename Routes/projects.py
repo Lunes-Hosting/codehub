@@ -72,7 +72,7 @@ def create_project():
     # For GET requests, fetch the available eggs
     resp = requests.get(f"{PTERODACTYL_URL}/api/application/nests/{AUTODEPLOY_NEST_ID}/eggs?include=variables", 
                                   headers={"Authorization": f"Bearer {PTERODACTYL_ADMIN_KEY}"})
-    print(f"{PTERODACTYL_URL}/api/application/nests/{AUTODEPLOY_NEST_ID}/eggs?include=variables)")
+    print(f"{PTERODACTYL_URL}/api/application/nests/{AUTODEPLOY_NEST_ID}/eggs?include=variables")
     print(resp)
     available_eggs = resp.json()['data']
 
