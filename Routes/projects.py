@@ -70,8 +70,10 @@ def create_project():
             return redirect(url_for('projects.home'))  # Redirect to clear form after submission
 
     # For GET requests, fetch the available eggs
-    available_eggs = requests.get(f"{PTERODACTYL_URL}/api/application/nests/{AUTODEPLOY_NEST_ID}/eggs?include=variables", 
-                                  headers={"Authorization": f"Bearer {PTERODACTYL_ADMIN_KEY}"}).json()['data']
+    resp = requests.get(f"{PTERODACTYL_URL}/api/application/nests/{AUTODEPLOY_NEST_ID}/eggs?include=variables", 
+                                  headers={"Authorization": f"Bearer {PTERODACTYL_ADMIN_KEY}"})
+    print(resp)
+    available_eggs = resp.json()['data']
 
     form = ProjectForm()
     return render_template("create_project.html", form=form, available_eggs=available_eggs, egg_variables=egg_variables)
