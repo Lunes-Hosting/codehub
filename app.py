@@ -13,4 +13,4 @@ app.register_blueprint(dashboard)
 app.register_blueprint(projects)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=3043, debug=True)
