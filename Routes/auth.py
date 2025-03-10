@@ -51,7 +51,7 @@ def login():
                         next_page = session.pop('next', None)
                         if next_page and is_safe_url(next_page):
                             return redirect(next_page)
-                        return redirect(url_for('index'))
+                        return redirect(url_for('dashboard.index'))
                 except ValueError as e:
                     print(f"Password hash error: {str(e)}")
                     flash('Invalid login credentials', 'error')

@@ -43,6 +43,7 @@ def get_egg_variables():
 @projects.route("/create_project", methods=['GET', 'POST'])
 def create_project():
     user = User(session)
+    username = user.get_email()  # Get the user's email to display in navbar
     egg_variables = []  # This will hold the variables for the selected egg
 
     if request.method == 'POST':
@@ -77,7 +78,7 @@ def create_project():
     available_eggs = resp.json()['data']
 
     form = ProjectForm()
-    return render_template("create_project.html", form=form, available_eggs=available_eggs, egg_variables=egg_variables)
+    return render_template("create_project.html", form=form, available_eggs=available_eggs, egg_variables=egg_variables, username=username)
 
 @projects.route('/project/<int:proj_id>', methods=['GET', 'POST'])
 @login_required
@@ -90,6 +91,7 @@ def project(proj_id):
         return redirect(url_for("dashboard.dashboard"))
 
     user_id = user.get_id()
+    username = user.get_email()  # Get the user's email to display in navbar
     is_owner = str(project['owner']) == str(user_id)
 
     # Load environment variables from the JSON field
@@ -117,11 +119,28 @@ def project(proj_id):
         return redirect(url_for('projects.project', proj_id=proj_id))  # Refresh page
 
     project_description_html = markdown.markdown(project['description'])
-    return render_template('project.html', project=project, env_variables=env_variables, is_owner=is_owner, project_description_html=project_description_html)
+    return render_template('project.html', project=project, env_variables=env_variables, is_owner=is_owner, project_description_html=project_description_html, username=username)
 
 
 @projects.route('/projects')
 @login_required
 def home():
-    projects = db.execute_query("SELECT * FROM projects WHERE enabled = %s", (1,), fetch_all=True)
-    return render_template('projects.html', projects=projects)
+    user = User(session)
+    user_id = user.get_id()
+    username = user.get_email()  # Get the user's email to display in navbar
+    
+    # Get projects owned by the current user
+    user_projects = db.execute_query(
+        "SELECT * FROM projects WHERE owner = %s AND enabled = %s", 
+        (user_id, 1), 
+        fetch_all=True
+    )
+    
+    # Get all enabled projects
+    all_projects = db.execute_query(
+        "SELECT * FROM projects WHERE enabled = %s", 
+        (1,), 
+        fetch_all=True
+    )
+    
+    return render_template('projects.html', user_projects=user_projects, all_projects=all_projects, username=username)

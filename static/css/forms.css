@@ -1,0 +1,123 @@
+/* 
+ * Form styles for Lunes Code Hub
+ */
+
+.form-container {
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.form-title {
+  border-bottom: 1px solid rgba(236, 240, 241, 0.1);
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-control {
+  background-color: var(--input-bg);
+  border: 1px solid rgba(236, 240, 241, 0.1);
+  border-radius: 6px;
+  color: var(--text-light);
+  padding: 0.75rem 1rem;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus {
+  background-color: var(--input-bg);
+  border-color: var(--light-blue);
+  box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+  color: var(--text-light);
+}
+
+.form-control::placeholder {
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+
+.form-select {
+  background-color: var(--input-bg);
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ecf0f1' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+  border: 1px solid rgba(236, 240, 241, 0.1);
+  border-radius: 6px;
+  color: var(--text-light);
+  padding: 0.75rem 1rem;
+}
+
+.form-select:focus {
+  background-color: var(--input-bg);
+  border-color: var(--light-blue);
+  box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+  color: var(--text-light);
+}
+
+.form-check-input {
+  background-color: var(--input-bg);
+  border: 1px solid rgba(236, 240, 241, 0.3);
+}
+
+.form-check-input:checked {
+  background-color: var(--light-blue);
+  border-color: var(--light-blue);
+}
+
+.form-check-label {
+  color: var(--text-light);
+}
+
+textarea.form-control {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.input-group-text {
+  background-color: rgba(44, 62, 80, 0.9);
+  border: 1px solid rgba(236, 240, 241, 0.1);
+  color: var(--text-muted);
+}
+
+.submit-btn {
+  background: linear-gradient(to right, var(--accent-blue), var(--light-blue));
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem 2rem;
+  transition: all 0.3s ease;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.submit-btn:hover {
+  background: linear-gradient(to right, var(--light-blue), var(--accent-blue));
+  box-shadow: 0 4px 10px rgba(41, 128, 185, 0.3);
+}
+
+/* Custom styling for specific form elements */
+.github-link-input {
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.env-variables-container {
+  background-color: rgba(26, 37, 47, 0.5);
+  border-radius: 6px;
+  padding: 1.5rem;
+  margin-top: 1rem;
+}
+
+.env-variable-input {
+  margin-bottom: 1rem;
+}
+
+.env-variable-label {
+  color: var(--light-blue);
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}

@@ -1,0 +1,105 @@
+/* 
+ * Responsive styles for Lunes Code Hub
+ */
+
+/* Extra small devices (phones, 576px and down) */
+@media (max-width: 576px) {
+  .container {
+    padding: 15px;
+  }
+  
+  #projects {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .project-header {
+    padding: 1.5rem;
+  }
+  
+  .project-title {
+    font-size: 1.5rem;
+  }
+  
+  .section-title {
+    font-size: 1.25rem;
+  }
+  
+  .navbar-brand {
+    font-size: 1.25rem;
+  }
+  
+  .form-container {
+    padding: 1.5rem;
+  }
+}
+
+/* Small devices (landscape phones, 576px and up) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+  #projects {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  #projects {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  }
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+  .container {
+    padding: 30px;
+  }
+  
+  .two-column-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+  }
+}
+
+/* Animations for different screen sizes */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --card-bg: rgba(52, 73, 94, 0.7);
+    --input-bg: rgba(44, 62, 80, 0.7);
+  }
+}
+
+/* Print styles */
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+  
+  .navbar, .footer, .btn {
+    display: none;
+  }
+  
+  .container {
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+  }
+  
+  #project, .project-header, .project-description, .project-section {
+    background: white;
+    border: 1px solid #ddd;
+    box-shadow: none;
+    break-inside: avoid;
+  }
+}

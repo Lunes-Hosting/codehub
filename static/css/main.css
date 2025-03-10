@@ -1,0 +1,147 @@
+/* 
+ * Main CSS file for Lunes Code Hub
+ * Contains global styles and variables
+ */
+
+:root {
+  /* Color palette */
+  --dark-blue-grey: #1e2a3a;
+  --medium-blue-grey: #2c3e50;
+  --light-blue: #3498db;
+  --lighter-blue: #5dade2;
+  --accent-blue: #2980b9;
+  --text-light: #ecf0f1;
+  --text-muted: #bdc3c7;
+  --success: #2ecc71;
+  --warning: #f39c12;
+  --danger: #e74c3c;
+  --card-bg: rgba(52, 73, 94, 0.7);
+  --input-bg: rgba(44, 62, 80, 0.7);
+}
+
+body {
+  background-color: var(--dark-blue-grey);
+  background-image: linear-gradient(to bottom, var(--light-blue) 0%, var(--dark-blue-grey) 300px);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  color: var(--text-light);
+  font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 1200px;
+  padding: 20px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+a {
+  color: var(--light-blue);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: var(--lighter-blue);
+  text-decoration: none;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--medium-blue-grey);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent-blue);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--light-blue);
+}
+
+/* Flash messages */
+.alert {
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  padding: 0.75rem 1.25rem;
+}
+
+.alert-success {
+  background-color: rgba(46, 204, 113, 0.2);
+  border: 1px solid var(--success);
+  color: var(--success);
+}
+
+.alert-error, .alert-danger {
+  background-color: rgba(231, 76, 60, 0.2);
+  border: 1px solid var(--danger);
+  color: var(--danger);
+}
+
+.alert-warning {
+  background-color: rgba(243, 156, 18, 0.2);
+  border: 1px solid var(--warning);
+  color: var(--warning);
+}
+
+/* Buttons */
+.btn {
+  border-radius: 4px;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background-color: var(--accent-blue);
+  border-color: var(--accent-blue);
+}
+
+.btn-primary:hover {
+  background-color: var(--light-blue);
+  border-color: var(--light-blue);
+}
+
+/* Forms */
+.form-control {
+  background-color: var(--input-bg);
+  border: 1px solid rgba(236, 240, 241, 0.2);
+  border-radius: 4px;
+  color: var(--text-light);
+  padding: 0.5rem 0.75rem;
+}
+
+.form-control:focus {
+  background-color: var(--input-bg);
+  border-color: var(--light-blue);
+  box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+  color: var(--text-light);
+}
+
+.form-label {
+  color: var(--text-light);
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}

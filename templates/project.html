@@ -1,122 +1,257 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>{{ project['name'] }}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ project['name'] }} | Lunes Code Hub</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SimpleMDE -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/projects.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
     <style>
-        /* Container with max-width to avoid stretching across the entire page */
-        .readme-container {
-            max-width: 800px;
+        /* Project specific styles */
+        .project-container {
+            max-width: 1000px;
             margin: 0 auto;
-            padding: 20px;
-            background-color: #f6f8fa;
+        }
+        
+        .readme-container {
+            background-color: var(--card-bg);
             border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            padding: 2rem;
+            position: relative;
+        }
+        
+        .readme-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to right, var(--light-blue), var(--accent-blue));
         }
     
-        /* Content area with padding and readable font */
         .readme-content {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Roboto', 'Segoe UI', sans-serif;
             line-height: 1.6;
             font-size: 16px;
-            color: #24292f;
+            color: var(--text-light);
         }
     
-        /* Style headers to look like GitHub */
         .readme-content h1,
         .readme-content h2,
         .readme-content h3 {
             font-weight: 600;
-            color: #2c3e50;
+            color: var(--text-light);
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
         }
     
         .readme-content h1 {
-            border-bottom: 2px solid #ddd;
-            padding-bottom: 5px;
+            border-bottom: 2px solid rgba(236, 240, 241, 0.1);
+            padding-bottom: 10px;
             margin-bottom: 20px;
+            font-size: 2rem;
         }
     
         .readme-content h2 {
-            margin-top: 30px;
-            margin-bottom: 10px;
+            font-size: 1.5rem;
         }
     
         .readme-content h3 {
-            margin-top: 20px;
-            margin-bottom: 5px;
+            font-size: 1.25rem;
         }
     
-        /* Lists style */
         .readme-content ul,
         .readme-content ol {
             margin-left: 20px;
+            margin-bottom: 1rem;
         }
     
         .readme-content li {
-            margin-bottom: 10px;
+            margin-bottom: 0.5rem;
         }
     
-        /* Links style */
         .readme-content a {
-            color: #0366d6;
+            color: var(--light-blue);
             text-decoration: none;
+            transition: color 0.3s ease;
         }
     
         .readme-content a:hover {
+            color: var(--lighter-blue);
             text-decoration: underline;
         }
     
-        /* Blockquote style */
         .readme-content blockquote {
-            border-left: 4px solid #ddd;
+            border-left: 4px solid var(--accent-blue);
             padding-left: 15px;
             margin: 20px 0;
             font-style: italic;
-            color: #6a737d;
+            color: var(--text-muted);
         }
     
-        /* Code style */
         .readme-content pre,
         .readme-content code {
-            background-color: #f6f8fa;
-            color: #24292f;
+            background-color: rgba(26, 37, 47, 0.5);
+            color: var(--text-light);
             font-family: 'Courier New', monospace;
-            border-radius: 3px;
+            border-radius: 4px;
             padding: 2px 4px;
         }
     
         .readme-content pre {
             padding: 15px;
             overflow-x: auto;
-        }
-    
-        /* Styling for the Edit button */
-        .btn-warning {
-            margin-top: 20px;
-        }
-        
-        /* Styling for Deploy button */
-        .deploy-btn {
-            margin-top: 20px;
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        
-        .deploy-btn:hover {
-            background-color: #218838;
+            margin-bottom: 1.5rem;
         }
 
         .readme-content img {
-            max-width: 100%;  /* Ensures the image doesn't exceed the container width */
-            height: auto;     /* Keeps the aspect ratio */
-            display: block;   /* Prevents inline elements like images from causing line breaks */
-            margin: 0 auto;   /* Centers the image */
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 1.5rem auto;
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .project-meta {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .project-meta-item {
+            margin-right: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .project-meta-item i {
+            color: var(--light-blue);
+            margin-right: 0.5rem;
+        }
+        
+        .deploy-btn {
+            background: linear-gradient(to right, #2ecc71, #27ae60);
+            border: none;
+            border-radius: 30px;
+            color: white;
+            font-weight: 600;
+            padding: 0.75rem 2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);
+            margin-top: 1.5rem;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .deploy-btn:hover {
+            box-shadow: 0 6px 15px rgba(46, 204, 113, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .deploy-btn i {
+            margin-right: 0.5rem;
+        }
+        
+        .action-buttons {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .edit-btn {
+            background: linear-gradient(to right, #f39c12, #e67e22);
+            border: none;
+            border-radius: 30px;
+            color: white;
+            font-weight: 600;
+            padding: 0.75rem 2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(243, 156, 18, 0.3);
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .edit-btn:hover {
+            box-shadow: 0 6px 15px rgba(243, 156, 18, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .edit-btn i {
+            margin-right: 0.5rem;
+        }
+        
+        .github-btn {
+            background: linear-gradient(to right, #333333, #24292e);
+            border: none;
+            border-radius: 30px;
+            color: white;
+            font-weight: 600;
+            padding: 0.75rem 2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(36, 41, 46, 0.3);
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .github-btn:hover {
+            box-shadow: 0 6px 15px rgba(36, 41, 46, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .github-btn i {
+            margin-right: 0.5rem;
+        }
+        
+        /* SimpleMDE Overrides */
+        .CodeMirror {
+            background-color: var(--input-bg);
+            color: var(--text-light);
+            border: 1px solid rgba(236, 240, 241, 0.1);
+            border-radius: 6px;
+        }
+        
+        .editor-toolbar {
+            background-color: var(--medium-blue-grey);
+            border: 1px solid rgba(236, 240, 241, 0.1);
+            border-radius: 6px 6px 0 0;
+        }
+        
+        .editor-toolbar a {
+            color: var(--text-light) !important;
+        }
+        
+        .editor-toolbar a:hover {
+            background-color: var(--card-bg);
+            color: var(--light-blue) !important;
+        }
+        
+        .editor-toolbar.fullscreen {
+            background-color: var(--medium-blue-grey);
+        }
+        
+        .CodeMirror-fullscreen {
+            background-color: var(--dark-blue-grey);
+        }
+        
+        .editor-preview {
+            background-color: var(--dark-blue-grey);
+            color: var(--text-light);
         }
     </style>
 </head>
@@ -124,66 +259,129 @@
     {% include 'navbar.html' %}
 
     {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
+    {% if messages %}
+        <div class="container mt-4">
             {% for category, message in messages %}
-                <div class="alert alert-{{ category }}">{{ message }}</div>
+                <div class="alert alert-{{ category }} fade-in">{{ message }}</div>
             {% endfor %}
-        {% endif %}
+        </div>
+    {% endif %}
     {% endwith %}
 
-    <!-- View Mode: Display Project Details -->
-    <h1>{{ project['name'] }}</h1>
-    <a href="{{ project['github_link'] }}" target="_blank">Source code</a>
-    <br>
+    <div class="container mt-4 fade-in project-container">
+        <!-- View Mode: Display Project Details -->
+        <div id="view-mode">
+            <div class="project-header">
+                <h1 class="project-title">{{ project['name'] }}</h1>
+                
+                <div class="project-meta">
+                    <div class="project-meta-item">
+                        <i class="fas fa-user"></i>
+                        <span>Owner ID: {{ project['owner'] }}</span>
+                    </div>
+                    {% if project['create_time'] %}
+                    <div class="project-meta-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Created: {{ project['create_time'].strftime('%b %d, %Y') }}</span>
+                    </div>
+                    {% endif %}
+                    {% if project['egg_id'] %}
+                    <div class="project-meta-item">
+                        <i class="fas fa-egg"></i>
+                        <span>Egg ID: {{ project['egg_id'] }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="action-buttons">
+                    <a href="{{ project['github_link'] }}" target="_blank" class="github-btn">
+                        <i class="fab fa-github"></i> View on GitHub
+                    </a>
+                    {% if is_owner %}
+                    <button class="edit-btn" onclick="enableEditMode()">
+                        <i class="fas fa-edit"></i> Edit Project
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
 
-    <!-- Project Description Section -->
-    <div id="view-mode">
-        <div class="readme-container">
-            <div class="readme-content">
-                {{ project_description_html | safe }}
-                <!-- Deploy Me Button -->
-                <button class="deploy-btn" onclick="window.location.href='https://betadash.lunes.host/servers/create?project_id=15'">
-                    Deploy Me!
-                </button>
+            <!-- Project Description Section -->
+            <div class="readme-container">
+                <div class="readme-content">
+                    {{ project_description_html | safe }}
+                    
+                    <!-- Deploy Me Button -->
+                    <button class="deploy-btn" onclick="window.location.href='https://betadash.lunes.host/servers/create?project_id=15'">
+                        <i class="fas fa-rocket"></i> Deploy Project
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Environment Variables Section (if any) -->
+            {% if env_variables %}
+            <div class="project-section">
+                <h2 class="section-title">Environment Variables</h2>
+                <div class="env-variables">
+                    {% for key, value in env_variables.items() %}
+                    <div class="env-variable">
+                        <span class="env-key">{{ key }}</span>
+                        <span class="env-value">{{ value }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Hidden Edit Form (Shown Only When Edit Mode is Active) -->
+        {% if is_owner %}
+        <div id="edit-mode" style="display: none;">
+            <div class="form-container">
+                <h2 class="form-title">Edit Project</h2>
+                <form method="POST">
+                    <div class="form-group mb-3">
+                        <label for="name" class="form-label">Project Name</label>
+                        <input type="text" class="form-control" id="name" name="name" value="{{ project['name'] }}" required>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="github_link" class="form-label">GitHub Link</label>
+                        <input type="url" class="form-control github-link-input" id="github_link" name="github_link" value="{{ project['github_link'] }}" required>
+                    </div>
+                    <div class="form-group mb-4">
+                        <label for="markdown-editor" class="form-label">Project Description</label>
+                        <textarea id="markdown-editor" name="description" class="form-control">{{ project['description'] }}</textarea>
+                    </div>
+                    
+                    {% if env_variables %}
+                    <div class="form-group mb-4">
+                        <h4 class="mb-3">Environment Variables</h4>
+                        <div class="env-variables-container">
+                            {% for key, value in env_variables.items() %}
+                            <div class="env-variable-input">
+                                <label for="variable_{{ key }}" class="env-variable-label">{{ key }}</label>
+                                <input type="text" class="form-control" id="variable_{{ key }}" name="variable_{{ key }}" value="{{ value }}">
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-save me-2"></i> Save Changes
+                        </button>
+                        <button type="button" class="btn btn-outline-light" onclick="disableEditMode()">
+                            <i class="fas fa-times me-2"></i> Cancel
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
-    
-        {% if is_owner %}
-            <button class="btn btn-warning" onclick="enableEditMode()">Edit</button>
         {% endif %}
     </div>
 
-    <!-- Hidden Edit Form (Shown Only When Edit Mode is Active) -->
-    {% if is_owner %}
-    <div id="edit-mode" style="display: none;">
-        <form method="POST">
-            <div class="form-group">
-                <label for="name">Project Name</label>
-                <input type="text" class="form-control" id="name" name="name" value="{{ project['name'] }}" required>
-            </div>
-            <div class="form-group">
-                <label for="github_link">GitHub Link</label>
-                <input type="url" class="form-control" id="github_link" name="github_link" value="{{ project['github_link'] }}" required>
-            </div>
-            <div class="form-group">
-                <label for="description">Project Description</label>
-                <textarea id="markdown-editor" name="description" class="form-control">{{ project['description'] }}</textarea>
-            </div>
-            <br>
-            <div class="form-group">
-                <h4>Environment Variables</h4>
-                {% for key, value in env_variables.items() %}
-                    <label for="variable_{{ key }}">{{ key }}</label>
-                    <input type="text" class="form-control" id="variable_{{ key }}" name="variable_{{ key }}" value="{{ value }}">
-                {% endfor %}
-            </div>
-            
-            <button type="submit" class="btn btn-success">Save</button>
-            <button type="button" class="btn btn-secondary" onclick="disableEditMode()">Cancel</button>
-        </form>
-    </div>
-    {% endif %}
-
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
     <script>
         let editor;
@@ -194,13 +392,21 @@
 
             // Initialize Markdown editor only once
             if (!editor) {
-                editor = new SimpleMDE({ element: document.getElementById("markdown-editor") });
+                editor = new SimpleMDE({ 
+                    element: document.getElementById("markdown-editor"),
+                    spellChecker: false,
+                    autosave: {
+                        enabled: true,
+                        uniqueId: "project-description",
+                        delay: 1000,
+                    }
+                });
             }
         }
 
         function disableEditMode() {
-            document.getElementById("edit-mode").style.display = "none";
             document.getElementById("view-mode").style.display = "block";
+            document.getElementById("edit-mode").style.display = "none";
         }
     </script>
 </body>

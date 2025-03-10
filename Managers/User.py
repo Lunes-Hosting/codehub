@@ -12,3 +12,6 @@ class User():
         user_id = db.execute_query("SELECT id FROM users WHERE email = %s", (session['email'],))[0]
         session ['user_id'] = user_id
         return user_id
+
+    def get_email(self) -> str:
+        return self.session['email']

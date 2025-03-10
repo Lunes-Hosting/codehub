@@ -1,0 +1,158 @@
+/* 
+ * Projects page styles for Lunes Code Hub
+ */
+
+#projects {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+#project {
+  background-color: var(--card-bg);
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  height: 100%;
+  position: relative;
+}
+
+#project:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+#project::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(to right, var(--light-blue), var(--accent-blue));
+}
+
+#project .card-body {
+  padding: 1.5rem;
+}
+
+#project .card-title {
+  color: var(--text-light);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+#project .card-text {
+  color: var(--text-light);
+  margin-bottom: 0.5rem;
+}
+
+#project .project-meta {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  margin-top: 1rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+#project .project-date {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.create-project-btn {
+  background: linear-gradient(to right, var(--accent-blue), var(--light-blue));
+  border: none;
+  border-radius: 30px;
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem 2rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(41, 128, 185, 0.3);
+}
+
+.create-project-btn:hover {
+  background: linear-gradient(to right, var(--light-blue), var(--accent-blue));
+  box-shadow: 0 6px 15px rgba(41, 128, 185, 0.4);
+  transform: translateY(-2px);
+}
+
+/* Project details page */
+.project-header {
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  padding: 2rem;
+  position: relative;
+}
+
+.project-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(to right, var(--light-blue), var(--accent-blue));
+}
+
+.project-title {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.project-description {
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  padding: 2rem;
+}
+
+.project-section {
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  padding: 2rem;
+}
+
+.section-title {
+  border-bottom: 1px solid rgba(236, 240, 241, 0.1);
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+}
+
+.env-variables {
+  background-color: rgba(26, 37, 47, 0.5);
+  border-radius: 6px;
+  padding: 1.5rem;
+}
+
+.env-variable {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(236, 240, 241, 0.05);
+}
+
+.env-variable:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.env-key {
+  color: var(--light-blue);
+  font-weight: 500;
+}
+
+.env-value {
+  color: var(--text-muted);
+  font-family: 'Courier New', Courier, monospace;
+}
