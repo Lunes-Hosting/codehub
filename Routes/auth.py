@@ -71,5 +71,8 @@ def register():
 
 @auth.route('/logout')
 def logout():
-    session.clear()
+    session.pop('email', None)
+    session.pop('user_id', None)
+    session.pop('role', None)
+    flash('You have been logged out', 'success')
     return redirect(url_for('auth.login'))

@@ -29,9 +29,15 @@
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                         <li>
+                            {% if user_id is defined %}
                             <a class="dropdown-item" href="{{ url_for('projects.user_profile', user_id=user_id) }}">
                                 <i class="fas fa-user me-2"></i> My Profile
                             </a>
+                            {% else %}
+                            <a class="dropdown-item" href="{{ url_for('projects.user_profile', user_id=session['user_id']) }}">
+                                <i class="fas fa-user me-2"></i> My Profile
+                            </a>
+                            {% endif %}
                         </li>
                         <li><hr class="dropdown-divider"></li>
                         <li>

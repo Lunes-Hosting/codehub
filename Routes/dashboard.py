@@ -9,4 +9,4 @@ dashboard = Blueprint('dashboard', __name__)
 @dashboard.route('/')
 @login_required
 def index():
-    return render_template('index.html', username=session['email'])
+    return render_template('index.html', username=session['email'], user_id=session['user_id'])

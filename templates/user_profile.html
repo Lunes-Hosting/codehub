@@ -121,6 +121,64 @@
             margin-bottom: 20px;
             opacity: 0.5;
         }
+        
+        /* Settings card styling */
+        .settings-card {
+            background: linear-gradient(135deg, #2c3e50, #1a2a38);
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .settings-header {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 15px 20px;
+        }
+        
+        .settings-header h5 {
+            margin: 0;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+        
+        .settings-header i {
+            color: var(--primary);
+        }
+        
+        .settings-body {
+            padding: 20px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .form-check-input {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .form-check-input:checked {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        .settings-btn {
+            background: linear-gradient(to right, var(--primary), var(--primary-light));
+            border: none;
+            border-radius: 30px;
+            color: white;
+            padding: 8px 20px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .settings-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -169,17 +227,17 @@
         
         {% if is_own_profile %}
         <div class="profile-settings mb-4">
-            <div class="card">
-                <div class="card-header">
+            <div class="card settings-card">
+                <div class="card-header settings-header">
                     <h5><i class="fas fa-cog me-2"></i>Profile Settings</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body settings-body">
                     <form action="{{ url_for('projects.toggle_email_visibility') }}" method="POST">
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="showEmailToggle" name="show_email" {% if profile_user['show_email'] == 1 %}checked{% endif %}>
                             <label class="form-check-label" for="showEmailToggle">Make my email address visible to other users</label>
                         </div>
-                        <button type="submit" class="btn btn-primary mt-3">Save Settings</button>
+                        <button type="submit" class="btn settings-btn mt-3">Save Settings</button>
                     </form>
                 </div>
             </div>
