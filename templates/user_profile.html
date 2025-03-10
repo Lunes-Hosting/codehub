@@ -235,9 +235,20 @@
                     <form action="{{ url_for('projects.toggle_email_visibility') }}" method="POST">
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="showEmailToggle" name="show_email" {% if profile_user['show_email'] == 1 %}checked{% endif %}>
-                            <label class="form-check-label" for="showEmailToggle">Make my email address visible to other users</label>
+                            <label class="form-check-label" for="showEmailToggle">
+                                Make my email address visible to other users
+                                <span class="status-badge {% if profile_user['show_email'] == 1 %}status-published{% else %}status-unpublished{% endif %} ms-2">
+                                    {% if profile_user['show_email'] == 1 %}
+                                    <i class="fas fa-eye"></i> Visible
+                                    {% else %}
+                                    <i class="fas fa-eye-slash"></i> Hidden
+                                    {% endif %}
+                                </span>
+                            </label>
                         </div>
-                        <button type="submit" class="btn settings-btn mt-3">Save Settings</button>
+                        <div class="mt-2 mb-3">
+                        </div>
+                        <button type="submit" class="btn settings-btn">Save Settings</button>
                     </form>
                 </div>
             </div>
