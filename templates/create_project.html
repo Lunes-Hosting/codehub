@@ -3,14 +3,225 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Project</title>
+    <title>Create Project | Lunes Code Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/projects.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
+    <style>
+        :root {
+            --bg-dark: #121212;
+            --card-bg: #1e1e1e;
+            --input-bg: #2a2a2a;
+            --text-light: #e0e0e0;
+            --text-muted: #a0a0a0;
+            --light-blue: #64b5f6;
+            --accent-blue: #2196f3;
+            --danger: #f44336;
+            --success: #4caf50;
+            --warning: #ff9800;
+        }
+        
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+        }
+        
+        .create-project-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .page-title {
+            font-size: 2rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            color: var(--text-light);
+            text-align: center;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(to right, var(--light-blue), var(--accent-blue));
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        .form-control {
+            background-color: var(--input-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            border-radius: 4px;
+            padding: 0.75rem 1rem;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.25);
+        }
+        
+        .form-select {
+            background-color: var(--input-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            border-radius: 4px;
+            padding: 0.75rem 1rem;
+            width: 100%;
+            transition: all 0.3s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23a0a0a0' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 16px 12px;
+        }
+        
+        .form-select:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.25);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, var(--light-blue), var(--accent-blue));
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+        }
+        
+        .error-text {
+            color: var(--danger);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+        
+        .success-text {
+            color: var(--success);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+        
+        .variables-section {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .variables-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+        }
+        
+        .variable-item {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .variable-name {
+            font-weight: 500;
+            color: var(--light-blue);
+            margin-bottom: 0.5rem;
+        }
+        
+        .variable-description {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .alert {
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .alert-success {
+            background-color: rgba(76, 175, 80, 0.1);
+            border-left: 4px solid var(--success);
+            color: var(--success);
+        }
+        
+        .alert-danger {
+            background-color: rgba(244, 67, 54, 0.1);
+            border-left: 4px solid var(--danger);
+            color: var(--danger);
+        }
+        
+        @media (max-width: 768px) {
+            .create-project-container {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+            
+            .page-title {
+                font-size: 1.75rem;
+            }
+        }
+    </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         // Function to dynamically update the variables based on the selected egg
         function updateVariables() {
             var selectedEggId = $('#egg-dropdown').val();
+            
+            if (!selectedEggId) {
+                $('#variables-container').empty();
+                $('#variables-section').hide();
+                return;
+            }
+            
+            $('#variables-loading').show();
+            $('#variables-container').hide();
+            
             $.ajax({
-                url: '/get_egg_variables',  // Call the new route for egg variables
+                url: '/get_egg_variables',
                 method: 'POST',
                 data: { egg: selectedEggId },
                 success: function(response) {
@@ -21,89 +232,122 @@
                     var variables = response.egg_variables;
                     
                     if (variables && variables.length > 0) {
+                        $('#variables-section').show();
+                        
                         variables.forEach(function(variable) {
-                            var varName = variable['attributes']['env_variable']; // Correct way to access the variable name
-                            var label = variable['attributes']['name']; // Display name
-                            var defaultValue = variable['attributes']['default_value']; // Default value if needed
-
-                            var variableInput = `<label>${label}</label><br>
-                                                <input type="text" name="variable_${varName}" class="form-control" value="${defaultValue}" /><br>`;
-                            $('#variables-container').append(variableInput);
+                            var varName = variable['attributes']['env_variable'];
+                            var label = variable['attributes']['name'];
+                            var defaultValue = variable['attributes']['default_value'] || '';
+                            var description = variable['attributes']['description'] || 'No description available';
+                            var required = variable['attributes']['rules'] && !variable['attributes']['rules'].includes('nullable');
+                            
+                            var variableItem = `
+                                <div class="variable-item">
+                                    <div class="variable-name">${label} ${required ? '<span class="text-danger">*</span>' : ''}</div>
+                                    <div class="variable-description">${description}</div>
+                                    <input type="text" 
+                                           name="variable_${varName}" 
+                                           class="form-control" 
+                                           value="${defaultValue}" 
+                                           placeholder="Enter value"
+                                           ${required ? 'required' : ''}>
+                                </div>
+                            `;
+                            $('#variables-container').append(variableItem);
                         });
+                    } else {
+                        $('#variables-section').show();
+                        $('#variables-container').append('<p class="text-muted">No variables for this egg.</p>');
                     }
-                     else {
-                        $('#variables-container').append('<p>No variables for this egg.</p>');
-                    }
+                    
+                    $('#variables-loading').hide();
+                    $('#variables-container').show();
                 },
                 error: function() {
                     $('#variables-container').empty();
-                    $('#variables-container').append('<p>Error retrieving egg variables.</p>');
+                    $('#variables-section').show();
+                    $('#variables-container').append('<div class="alert alert-danger">Error retrieving egg variables.</div>');
+                    $('#variables-loading').hide();
+                    $('#variables-container').show();
                 }
             });
         }
+        
+        $(document).ready(function() {
+            // Hide variables section initially
+            $('#variables-section').hide();
+            
+            // Initialize tooltips
+            $('[data-bs-toggle="tooltip"]').tooltip();
+        });
     </script>
-    
-    
-    
 </head>
 <body>
-    <h2>Create Project</h2>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <p style="color: green;">{{ message }}</p>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-
-    <form method="POST">
-        {{ form.hidden_tag() }}
-
-        <p>
-            {{ form.name.label }}<br>
-            {{ form.name() }}<br>
-            {% for error in form.name.errors %}
-                <span style="color: red;">{{ error }}</span><br>
-            {% endfor %}
-        </p>
+    {% include 'navbar.html' %}
+    
+    <div class="container create-project-container fade-in">
+        <h1 class="page-title">Create New Project</h1>
         
-        <p>
-            {{ form.github_link.label }}<br>
-            {{ form.github_link() }}<br>
-            {% for error in form.github_link.errors %}
-                <span style="color: red;">{{ error }}</span><br>
-            {% endfor %}
-        </p>
-
-        <!-- Dropdown for Available Eggs -->
-        <p>
-            <label for="egg-dropdown">Select Egg:</label><br>
-            <select id="egg-dropdown" name="egg" class="form-control" onchange="updateVariables()">
-                <option value="">-- Select an Egg --</option>
-                {% for egg in available_eggs %}
-                    <option value="{{ egg['attributes']['id'] }}">{{ egg['attributes']['name'] }}</option>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
                 {% endfor %}
-            </select>
-        </p>
-
-        <!-- Container to dynamically show variables -->
-        <div id="variables-container">
-            {% for variable in egg_variables %}
-                <label>{{ variable['attributes']['name'] }}</label><br>
-                <p>Debug: {{ variable['attributes'].get('description', 'No description available') }}</p>
-                <input 
-                    type="text" 
-                    name="variable_{{ variable['attributes']['env_variable'] }}" 
-                    class="form-control"
-                    placeholder="test"
-                    {% if "nullable" not in variable['attributes']['rules'] %} required {% endif %}
-                /><br>
-            {% endfor %}
-        </div>
+            {% endif %}
+        {% endwith %}
         
-        
-
-        <p>{{ form.submit() }}</p>
-    </form>
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            
+            <div class="form-group">
+                <label for="{{ form.name.id }}" class="form-label">Project Name</label>
+                {{ form.name(class="form-control", placeholder="Enter project name") }}
+                {% for error in form.name.errors %}
+                    <div class="error-text">{{ error }}</div>
+                {% endfor %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.github_link.id }}" class="form-label">GitHub Repository URL</label>
+                {{ form.github_link(class="form-control", placeholder="https://github.com/username/repository") }}
+                {% for error in form.github_link.errors %}
+                    <div class="error-text">{{ error }}</div>
+                {% endfor %}
+            </div>
+            
+            <div class="form-group">
+                <label for="egg-dropdown" class="form-label">Select Egg Template</label>
+                <select id="egg-dropdown" name="egg" class="form-select" onchange="updateVariables()">
+                    <option value="">-- Select an Egg Template --</option>
+                    {% for egg in available_eggs %}
+                        <option value="{{ egg['attributes']['id'] }}">{{ egg['attributes']['name'] }}</option>
+                    {% endfor %}
+                </select>
+                <small class="text-muted">Eggs are pre-configured templates for different types of applications</small>
+            </div>
+            
+            <div id="variables-section" class="variables-section">
+                <h3 class="variables-title">Environment Variables</h3>
+                <div id="variables-loading" class="text-center my-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Loading variables...</p>
+                </div>
+                <div id="variables-container">
+                    <!-- Variables will be loaded here dynamically -->
+                </div>
+            </div>
+            
+            <div class="form-group mt-4">
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+        </form>
+    </div>
+    
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -49,7 +49,28 @@
             font-weight: 500;
             position: relative;
             cursor: pointer;
-            transition: all 0.3s ease;
+        }
+        
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-left: 10px;
+        }
+        
+        .status-published {
+            background-color: rgba(76, 175, 80, 0.2);
+            color: #4caf50;
+            border: 1px solid rgba(76, 175, 80, 0.4);
+        }
+        
+        .status-unpublished {
+            background-color: rgba(255, 152, 0, 0.2);
+            color: #ff9800;
+            border: 1px solid rgba(255, 152, 0, 0.4);
         }
         
         .tab-btn.active {
@@ -76,6 +97,55 @@
         
         .tab-content.active {
             display: block;
+        }
+        
+        /* Star button styles */
+        .star-btn {
+            background-color: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            padding: 0.25rem 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: 4px;
+        }
+        
+        .star-btn:hover {
+            color: var(--text-light);
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .star-btn.starred {
+            color: #f1c40f;
+        }
+        
+        .star-btn.starred:hover {
+            background-color: rgba(241, 196, 15, 0.1);
+        }
+        
+        .star-btn .star-icon {
+            transition: transform 0.3s ease;
+        }
+        
+        .star-btn:hover .star-icon {
+            transform: scale(1.2);
+        }
+        
+        .project-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+        
+        .project-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
     </style>
 </head>
@@ -119,7 +189,13 @@
                     <a href="{{ url_for('projects.project', proj_id=project['id']) }}" class="text-decoration-none">
                         <div id="project" class="card">
                             <div class="card-body">
-                                <h5 class="card-title">{{ project['name'] }}</h5>
+                                <h5 class="card-title">
+                                    {{ project['name'] }}
+                                    <span class="status-badge {% if project['enabled'] == 1 %}status-published{% else %}status-unpublished{% endif %}">
+                                        <i class="fas {% if project['enabled'] == 1 %}fa-globe{% else %}fa-eye-slash{% endif %}"></i>
+                                        {% if project['enabled'] == 1 %}Published{% else %}Unpublished{% endif %}
+                                    </span>
+                                </h5>
                                 <p class="card-text">
                                     {% if project['description']|length > 100 %}
                                         {{ project['description'][:100] }}...
@@ -128,13 +204,20 @@
                                     {% endif %}
                                 </p>
                                 <div class="project-meta">
-                                    <span class="project-owner">
-                                        <i class="fas fa-user-shield me-1"></i> You are the owner
-                                    </span>
-                                    <span class="project-date">
-                                        <i class="fas fa-calendar-alt me-1"></i> 
-                                        {{ project['create_time'].strftime('%b %d, %Y') if project['create_time'] else 'No date' }}
-                                    </span>
+                                    <div class="project-info">
+                                        <span class="project-owner">
+                                            <i class="fas fa-user-shield me-1"></i> You are the owner
+                                        </span>
+                                        <span class="project-date">
+                                            <i class="fas fa-calendar-alt me-1"></i> 
+                                            {{ project['create_time'].strftime('%b %d, %Y') if project['create_time'] else 'No date' }}
+                                        </span>
+                                    </div>
+                                    <button class="star-btn {% if project['id'] in starred_projects %}starred{% endif %}" 
+                                            onclick="toggleStar(event, {{ project['id'] }}, this);">
+                                        <i class="star-icon {% if project['id'] in starred_projects %}fas{% else %}far{% endif %} fa-star"></i>
+                                        <span class="star-count">{{ star_counts.get(project['id'], 0) }}</span>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -159,13 +242,19 @@
 
         <!-- All Projects Tab -->
         <div id="all-projects" class="tab-content">
-            {% if all_projects|length > 0 %}
+            {% if public_projects|length > 0 %}
             <div id="projects">
-                {% for project in all_projects %}
+                {% for project in public_projects %}
                     <a href="{{ url_for('projects.project', proj_id=project['id']) }}" class="text-decoration-none">
                         <div id="project" class="card">
                             <div class="card-body">
-                                <h5 class="card-title">{{ project['name'] }}</h5>
+                                <h5 class="card-title">
+                                    {{ project['name'] }}
+                                    <span class="status-badge status-published">
+                                        <i class="fas fa-globe"></i>
+                                        Published
+                                    </span>
+                                </h5>
                                 <p class="card-text">
                                     {% if project['description']|length > 100 %}
                                         {{ project['description'][:100] }}...
@@ -174,13 +263,20 @@
                                     {% endif %}
                                 </p>
                                 <div class="project-meta">
-                                    <span class="project-owner">
-                                        <i class="fas fa-user me-1"></i> Owner ID: {{ project['owner'] }}
-                                    </span>
-                                    <span class="project-date">
-                                        <i class="fas fa-calendar-alt me-1"></i> 
-                                        {{ project['create_time'].strftime('%b %d, %Y') if project['create_time'] else 'No date' }}
-                                    </span>
+                                    <div class="project-info">
+                                        <span class="project-owner">
+                                            <i class="fas fa-user me-1"></i> Owner ID: {{ project['owner'] }}
+                                        </span>
+                                        <span class="project-date">
+                                            <i class="fas fa-calendar-alt me-1"></i> 
+                                            {{ project['create_time'].strftime('%b %d, %Y') if project['create_time'] else 'No date' }}
+                                        </span>
+                                    </div>
+                                    <button class="star-btn {% if project['id'] in starred_projects %}starred{% endif %}" 
+                                            onclick="toggleStar(event, {{ project['id'] }}, this);">
+                                        <i class="star-icon {% if project['id'] in starred_projects %}fas{% else %}far{% endif %} fa-star"></i>
+                                        <span class="star-count">{{ star_counts.get(project['id'], 0) }}</span>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -192,13 +288,8 @@
                 <div class="mb-4">
                     <i class="fas fa-globe fa-5x text-muted"></i>
                 </div>
-                <h3 class="mb-3">No projects found</h3>
-                <p class="text-muted mb-4">Be the first to create a project!</p>
-                <a href="{{ url_for('projects.create_project') }}">
-                    <button class="create-project-btn">
-                        <i class="fas fa-plus me-2"></i>Create Project
-                    </button>
-                </a>
+                <h3 class="mb-3">No published projects from other users</h3>
+                <p class="text-muted mb-4">Check back later for more projects</p>
             </div>
             {% endif %}
         </div>
@@ -226,6 +317,50 @@
                 });
             });
         });
+        
+        // Star functionality
+        function toggleStar(event, projectId, button) {
+            // Prevent the click from navigating to the project page
+            event.preventDefault();
+            event.stopPropagation();
+            
+            const starIcon = button.querySelector('.star-icon');
+            const starCount = button.querySelector('.star-count');
+            
+            fetch(`/project/${projectId}/toggle_star`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Update star button appearance
+                    if (data.is_starred) {
+                        button.classList.add('starred');
+                        starIcon.classList.remove('far');
+                        starIcon.classList.add('fas');
+                    } else {
+                        button.classList.remove('starred');
+                        starIcon.classList.remove('fas');
+                        starIcon.classList.add('far');
+                    }
+                    
+                    // Update star count
+                    starCount.textContent = data.star_count;
+                    
+                    // Add a little animation
+                    starIcon.style.transform = 'scale(1.3)';
+                    setTimeout(() => {
+                        starIcon.style.transform = 'scale(1)';
+                    }, 300);
+                }
+            })
+            .catch(error => {
+                console.error('Error toggling star:', error);
+            });
+        }
     </script>
 </body>
 </html>
