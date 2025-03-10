@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results - CodeHub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+    <style>
+        .search-container {
+            margin: 30px 0;
+        }
+        
+        .search-header {
+            margin-bottom: 30px;
+        }
+        
+        .search-header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--text-light);
+            margin-bottom: 10px;
+        }
+        
+        .search-header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+        
+        .search-form {
+            max-width: 800px;
+            margin: 0 auto 40px;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 15px 60px 15px 25px;
+            border-radius: 30px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--text-light);
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+        }
+        
+        .search-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .search-btn:hover {
+            color: var(--primary-light);
+        }
+        
+        .results-count {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+        
+        .project-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        
+        .project-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin: 0;
+        }
+        
+        .project-name a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .project-name a:hover {
+            color: var(--primary);
+        }
+        
+        .project-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        .project-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .project-meta-item a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .project-meta-item a:hover {
+            color: var(--primary);
+        }
+        
+        .project-description {
+            color: var(--text-light);
+            margin-bottom: 20px;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        
+        .project-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .project-links {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .project-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .project-link:hover {
+            color: var(--primary-light);
+            transform: translateY(-2px);
+        }
+        
+        .star-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+        
+        .star-btn:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .star-btn.starred {
+            color: #ffc107;
+        }
+        
+        .star-btn.starred .star-icon {
+            color: #ffc107;
+        }
+        
+        .star-count {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 50px 0;
+            color: var(--text-muted);
+        }
+        
+        .no-results i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        .no-results h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: var(--text-light);
+        }
+        
+        .search-relevance {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: rgba(0, 123, 255, 0.2);
+            color: var(--primary-light);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    {% include 'navbar.html' %}
+    
+    <div class="container">
+        <div class="search-container">
+            <div class="search-header">
+                <h1>Search Projects</h1>
+                <p>Find projects by name, description, owner, or GitHub URL</p>
+            </div>
+            
+            <form class="search-form" action="{{ url_for('projects.search') }}" method="GET">
+                <input type="text" name="q" class="search-input" placeholder="Search for projects..." value="{{ query }}" required>
+                <button type="submit" class="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+            
+            {% if query %}
+                <div class="results-count">
+                    Found {{ results|length }} results for "{{ query }}"
+                </div>
+                
+                {% if results %}
+                    <div class="row">
+                        {% for project, score in results %}
+                            <div class="col-md-6 mb-4">
+                                <div class="project-card">
+                                    <span class="search-relevance">{{ (score * 100)|int }}% match</span>
+                                    <div class="project-header">
+                                        <h3 class="project-name">
+                                            {% if project is mapping %}
+                                            <a href="{{ url_for('projects.project', proj_id=project['id']) }}">{{ project['name'] }}</a>
+                                            {% else %}
+                                            <a href="{{ url_for('projects.project', proj_id=project[0]) }}">{{ project[1] }}</a>
+                                            {% endif %}
+                                        </h3>
+                                    </div>
+                                    
+                                    <div class="project-meta">
+                                        <div class="project-meta-item">
+                                            <i class="fas fa-user"></i>
+                                            {% if project is mapping %}
+                                            <a href="{{ url_for('projects.user_profile', user_id=project['owner']) }}">{{ project['owner_name'] }}</a>
+                                            {% else %}
+                                            <a href="{{ url_for('projects.user_profile', user_id=project[5]) }}">{{ project[6] }}</a>
+                                            {% endif %}
+                                        </div>
+                                        <div class="project-meta-item">
+                                            <i class="fas fa-calendar"></i>
+                                            {% if project is mapping %}
+                                            <span>{{ project['create_time'].strftime('%b %d, %Y') }}</span>
+                                            {% else %}
+                                            <span>{{ project[4].strftime('%b %d, %Y') }}</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    
+                                    <p class="project-description">
+                                        {% if project is mapping %}
+                                        {{ project['description']|truncate(150) }}
+                                        {% else %}
+                                        {{ project[2]|truncate(150) }}
+                                        {% endif %}
+                                    </p>
+                                    
+                                    <div class="project-footer">
+                                        <div class="project-links">
+                                            {% if project is mapping %}
+                                            <a href="{{ url_for('projects.project', proj_id=project['id']) }}" class="project-link">
+                                            {% else %}
+                                            <a href="{{ url_for('projects.project', proj_id=project[0]) }}" class="project-link">
+                                            {% endif %}
+                                                <i class="fas fa-eye"></i> View
+                                            </a>
+                                            {% if project is mapping and project['github_link'] %}
+                                            <a href="{{ project['github_link'] }}" target="_blank" class="project-link">
+                                                <i class="fab fa-github"></i> GitHub
+                                            </a>
+                                            {% elif not project is mapping and project[3] %}
+                                            <a href="{{ project[3] }}" target="_blank" class="project-link">
+                                                <i class="fab fa-github"></i> GitHub
+                                            </a>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <button class="star-btn {% if project is mapping and project['id'] in starred_projects %}starred{% elif not project is mapping and project[0] in starred_projects %}starred{% endif %}" 
+                                                onclick="toggleStar(event, '{% if project is mapping %}{{ project['id'] }}{% else %}{{ project[0] }}{% endif %}', this)">
+                                            <i class="star-icon {% if project is mapping and project['id'] in starred_projects %}fas{% elif not project is mapping and project[0] in starred_projects %}fas{% else %}far{% endif %} fa-star"></i>
+                                            <span class="star-count">{% if project is mapping %}{{ star_counts.get(project['id'], 0) }}{% else %}{{ star_counts.get(project[0], 0) }}{% endif %}</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="no-results">
+                        <i class="fas fa-search"></i>
+                        <h3>No results found</h3>
+                        <p>Try different keywords or check your spelling</p>
+                    </div>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleStar(event, projectId, button) {
+            // Prevent the click from navigating to the project page
+            event.preventDefault();
+            event.stopPropagation();
+            
+            const starIcon = button.querySelector('.star-icon');
+            const starCount = button.querySelector('.star-count');
+            
+            fetch(`/project/${projectId}/toggle_star`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.starred) {
+                    button.classList.add('starred');
+                    starIcon.classList.remove('far');
+                    starIcon.classList.add('fas');
+                } else {
+                    button.classList.remove('starred');
+                    starIcon.classList.remove('fas');
+                    starIcon.classList.add('far');
+                }
+                starCount.textContent = data.count;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>

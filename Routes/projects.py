@@ -11,6 +11,7 @@ from Managers.User import User
 import markdown
 import requests
 import json
+from utils.search import search_projects
 
 
 projects = Blueprint('projects', __name__)
@@ -518,3 +519,93 @@ def toggle_email_visibility():
     
     flash("Email visibility settings updated successfully", "success")
     return redirect(url_for('projects.user_profile', user_id=user_id))
+
+
+@projects.route('/search')
+@login_required
+def search():
+    query = request.args.get('q', '')
+    
+    if not query:
+        return render_template('search_results.html', 
+                              results=[], 
+                              query='',
+                              username=session['email'],
+                              user_id=session['user_id'])
+    
+    # Get all projects
+    projects = db.execute_query(
+        """
+        SELECT p.id, p.name, p.description, p.github_link, p.create_time, p.owner, 
+               u.name as owner_name, p.enabled
+        FROM projects p
+        JOIN users u ON p.owner = u.id
+        WHERE p.enabled = 1
+        ORDER BY p.create_time DESC
+        """
+    )
+    
+    # Debug: Print the type of projects
+    print(f"Type of projects: {type(projects)}")
+    
+    # Handle different return types from database
+    if isinstance(projects, dict):
+        # If it's a single project as a dict
+        projects_list = [projects]
+    elif hasattr(projects, 'items'):
+        # If it's a dict-like object with items
+        projects_list = list(projects.values())
+    else:
+        # Assume it's already a list
+        projects_list = projects
+    
+    # Perform search
+    search_results = search_projects(projects_list, query)
+    
+    # Get current user's starred projects
+    user = User(session)
+    user_id = user.get_id()
+    
+    starred_projects = db.execute_query(
+        """
+        SELECT project_id FROM project_stars
+        WHERE user_id = %s
+        """,
+        (user_id,)
+    )
+    
+    # Convert to a set of project IDs for easier lookup
+    starred_project_ids = set()
+    if starred_projects:
+        if isinstance(starred_projects, dict):
+            if 'project_id' in starred_projects:
+                starred_project_ids.add(starred_projects['project_id'])
+        else:
+            for star in starred_projects:
+                if isinstance(star, dict) and 'project_id' in star:
+                    starred_project_ids.add(star['project_id'])
+    
+    # Get star counts for each project
+    star_counts = {}
+    for project, _ in search_results:
+        project_id = project['id'] if isinstance(project, dict) else project[0]
+        count = db.execute_query(
+            """
+            SELECT COUNT(*) as count FROM project_stars
+            WHERE project_id = %s
+            """,
+            (project_id,)
+        )
+        if count:
+            if isinstance(count, dict):
+                star_counts[project_id] = count.get('count', 0)
+            else:
+                star_counts[project_id] = count[0].get('count', 0) if count[0] else 0
+    
+    return render_template('search_results.html', 
+                          results=search_results, 
+                          query=query,
+                          starred_projects=starred_project_ids,
+                          star_counts=star_counts,
+                          username=session['email'],
+                          user_id=session['user_id'])

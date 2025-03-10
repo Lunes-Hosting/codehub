@@ -8,54 +8,69 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
                     <a class="nav-link {% if request.endpoint == 'projects.home' %}active{% endif %}" 
                        href="{{ url_for('projects.home') }}">
                         <i class="fas fa-project-diagram me-1"></i> Projects
                     </a>
                 </li>
-                {% if username %}
-                <li class="nav-item">
-                    <a class="nav-link {% if request.endpoint == 'projects.create_project' %}active{% endif %}" 
-                       href="{{ url_for('projects.create_project') }}">
-                        <i class="fas fa-plus me-1"></i> New Project
-                    </a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" 
-                       data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-user-circle me-1"></i> {{ username }}
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                        <li>
-                            {% if user_id is defined %}
-                            <a class="dropdown-item" href="{{ url_for('projects.user_profile', user_id=user_id) }}">
-                                <i class="fas fa-user me-2"></i> My Profile
-                            </a>
-                            {% else %}
-                            <a class="dropdown-item" href="{{ url_for('projects.user_profile', user_id=session['user_id']) }}">
-                                <i class="fas fa-user me-2"></i> My Profile
-                            </a>
-                            {% endif %}
-                        </li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li>
-                            <a class="dropdown-item" href="{{ url_for('auth.logout') }}">
-                                <i class="fas fa-sign-out-alt me-2"></i> Logout
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                {% else %}
-                <li class="nav-item">
-                    <a class="nav-link {% if request.endpoint == 'auth.login' %}active{% endif %}" 
-                       href="{{ url_for('auth.login') }}">
-                        <i class="fas fa-sign-in-alt me-1"></i> Login
-                    </a>
-                </li>
-                {% endif %}
             </ul>
+            
+            <!-- Search form -->
+            <form class="d-flex navbar-search me-3" action="{{ url_for('projects.search') }}" method="GET">
+                <div class="input-group">
+                    <input class="form-control search-input" type="search" name="q" placeholder="Search projects..." aria-label="Search">
+                    <button class="btn search-btn" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </form>
+            
+            <div class="d-flex align-items-center">
+                <ul class="navbar-nav ms-auto">
+                    {% if username %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'projects.create_project' %}active{% endif %}" 
+                           href="{{ url_for('projects.create_project') }}">
+                            <i class="fas fa-plus me-1"></i> New Project
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" 
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle me-1"></i> {{ username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li>
+                                {% if user_id is defined %}
+                                <a class="dropdown-item" href="{{ url_for('projects.user_profile', user_id=user_id) }}">
+                                    <i class="fas fa-user me-2"></i> My Profile
+                                </a>
+                                {% else %}
+                                <a class="dropdown-item" href="{{ url_for('projects.user_profile', user_id=session['user_id']) }}">
+                                    <i class="fas fa-user me-2"></i> My Profile
+                                </a>
+                                {% endif %}
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" href="{{ url_for('auth.logout') }}">
+                                    <i class="fas fa-sign-out-alt me-2"></i> Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'auth.login' %}active{% endif %}" 
+                           href="{{ url_for('auth.login') }}">
+                            <i class="fas fa-sign-in-alt me-1"></i> Login
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
         </div>
     </div>
 </nav>
