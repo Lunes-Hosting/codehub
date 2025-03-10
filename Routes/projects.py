@@ -43,6 +43,7 @@ def get_egg_variables():
 @projects.route("/create_project", methods=['GET', 'POST'])
 def create_project():
     user = User(session)
+    user_id = user.get_id()
     username = user.get_email()  # Get the user's email to display in navbar
     egg_variables = []  # This will hold the variables for the selected egg
 
@@ -78,7 +79,7 @@ def create_project():
     available_eggs = resp.json()['data']
 
     form = ProjectForm()
-    return render_template("create_project.html", form=form, available_eggs=available_eggs, egg_variables=egg_variables, username=username)
+    return render_template("create_project.html", form=form, available_eggs=available_eggs, egg_variables=egg_variables, username=username, user_id=user_id)
 
 @projects.route('/project/<int:proj_id>', methods=['GET', 'POST'])
 @login_required
@@ -104,6 +105,12 @@ def project(proj_id):
     if project['enabled'] == 0 and not is_owner:
         flash("You don't have permission to view this project", "danger")
         return redirect(url_for('projects.home'))
+    
+    # Get the owner's information
+    owner_info = db.execute_query(
+        "SELECT id, name FROM users WHERE id = %s", 
+        (project['owner'],)
+    )
     
     # Load environment variables from the project data
     env_variables = {}
@@ -159,7 +166,9 @@ def project(proj_id):
                           project_description_html=project_description_html,
                           is_starred=is_starred,
                           star_count=star_count,
-                          username=username)
+                          username=username,
+                          user_id=user_id,
+                          owner_info=owner_info)
 
 
 @projects.route('/project/<int:proj_id>/toggle_star', methods=['POST'])
@@ -364,7 +373,7 @@ def toggle_publish(proj_id):
 def home():
     user = User(session)
     user_id = user.get_id()
-    username = user.get_email()  # Get the user's email to display in navbar
+    username = user.get_email()  # Get the current user's email to display in navbar
     
     # Get all projects owned by the current user (both published and unpublished)
     user_projects = db.execute_query(
@@ -418,4 +427,94 @@ def home():
                 starred_projects.add(result['project_id'])
     
     return render_template("projects.html", user_projects=user_projects, public_projects=public_projects, 
-                           star_counts=star_counts, starred_projects=starred_projects, username=username)
+                           star_counts=star_counts, starred_projects=starred_projects, username=username, user_id=user_id)
+
+
+@projects.route('/user/<int:user_id>')
+@login_required
+def user_profile(user_id):
+    user = User(session)
+    current_user_id = user.get_id()
+    username = user.get_email()  # Get the current user's email to display in navbar
+    
+    # Get the profile user's details
+    profile_user = db.execute_query(
+        "SELECT id, name, email, avatar, created_at, role, show_email FROM users WHERE id = %s", 
+        (user_id,)
+    )
+    
+    if not profile_user:
+        flash("User not found", "danger")
+        return redirect(url_for('projects.home'))
+    
+    # Get all published projects owned by this user
+    user_projects = db.execute_query(
+        "SELECT * FROM projects WHERE owner = %s AND (enabled = 1 OR owner = %s)", 
+        (user_id, current_user_id), 
+        fetch_all=True
+    )
+    
+    # Get star counts for all projects
+    star_counts = {}
+    starred_projects = set()
+    
+    # Get all project IDs
+    project_ids = []
+    for project in user_projects:
+        if project['id'] not in project_ids:
+            project_ids.append(project['id'])
+    
+    if project_ids:
+        # Get star counts for all projects
+        star_count_results = db.execute_query(
+            "SELECT project_id, COUNT(*) as count FROM project_stars WHERE project_id IN ({}) GROUP BY project_id".format(
+                ','.join(['%s'] * len(project_ids))
+            ), 
+            project_ids,
+            fetch_all=True
+        )
+        
+        if star_count_results:
+            for result in star_count_results:
+                star_counts[result['project_id']] = result['count']
+        
+        # Get projects starred by the current user
+        starred_by_user = db.execute_query(
+            "SELECT project_id FROM project_stars WHERE user_id = %s AND project_id IN ({})".format(
+                ','.join(['%s'] * len(project_ids))
+            ), 
+            [current_user_id] + project_ids,
+            fetch_all=True
+        )
+        
+        if starred_by_user:
+            for result in starred_by_user:
+                starred_projects.add(result['project_id'])
+    
+    return render_template('user_profile.html', 
+                          profile_user=profile_user, 
+                          user_projects=user_projects,
+                          star_counts=star_counts,
+                          starred_projects=starred_projects,
+                          is_own_profile=(current_user_id == user_id),
+                          username=username,
+                          user_id=current_user_id)
+
+
+@projects.route('/toggle_email_visibility', methods=['POST'])
+@login_required
+def toggle_email_visibility():
+    user = User(session)
+    user_id = user.get_id()
+    
+    # Get the form data
+    show_email = 1 if request.form.get('show_email') else 0
+    
+    # Update the user's email visibility setting
+    db.execute_query(
+        "UPDATE users SET show_email = %s WHERE id = %s",
+        (show_email, user_id)
+    )
+    
+    flash("Email visibility settings updated successfully", "success")
+    return redirect(url_for('projects.user_profile', user_id=user_id))

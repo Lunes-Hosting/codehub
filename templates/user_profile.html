@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ profile_user['name'] }} | Lunes Code Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/projects.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
+    <style>
+        .profile-header {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+        
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .profile-info {
+            flex: 1;
+        }
+        
+        .profile-name {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 5px;
+        }
+        
+        .profile-role {
+            display: inline-block;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+        
+        .profile-meta {
+            display: flex;
+            gap: 20px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .profile-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .profile-meta-item i {
+            font-size: 1rem;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            color: var(--primary);
+        }
+        
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-left: 10px;
+        }
+        
+        .status-published {
+            background-color: rgba(76, 175, 80, 0.2);
+            color: #4caf50;
+            border: 1px solid rgba(76, 175, 80, 0.4);
+        }
+        
+        .status-unpublished {
+            background-color: rgba(255, 152, 0, 0.2);
+            color: #ff9800;
+            border: 1px solid rgba(255, 152, 0, 0.4);
+        }
+        
+        .empty-projects {
+            text-align: center;
+            padding: 50px 0;
+            color: var(--text-muted);
+        }
+        
+        .empty-projects i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    {% include 'navbar.html' %}
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="container mt-4">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} fade-in">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% endwith %}
+
+    <div class="container mt-4 fade-in">
+        <div class="profile-header">
+            {% if profile_user['avatar'] %}
+            <img src="{{ profile_user['avatar'] }}" alt="{{ profile_user['name'] }}" class="profile-avatar">
+            {% else %}
+            <div class="profile-avatar" style="display: flex; align-items: center; justify-content: center; background-color: rgba(255, 255, 255, 0.1);">
+                <i class="fas fa-user fa-3x" style="color: rgba(255, 255, 255, 0.5);"></i>
+            </div>
+            {% endif %}
+            
+            <div class="profile-info">
+                <h1 class="profile-name">{{ profile_user['name'] }}</h1>
+                <span class="profile-role">{{ profile_user['role']|title }}</span>
+                
+                <div class="profile-meta">
+                    {% if is_own_profile or profile_user['show_email'] == 1 %}
+                    <div class="profile-meta-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>{{ profile_user['email'] }}</span>
+                    </div>
+                    {% endif %}
+                    {% if profile_user['created_at'] %}
+                    <div class="profile-meta-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Joined: {{ profile_user['created_at'].strftime('%b %d, %Y') }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        {% if is_own_profile %}
+        <div class="profile-settings mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-cog me-2"></i>Profile Settings</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{{ url_for('projects.toggle_email_visibility') }}" method="POST">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="showEmailToggle" name="show_email" {% if profile_user['show_email'] == 1 %}checked{% endif %}>
+                            <label class="form-check-label" for="showEmailToggle">Make my email address visible to other users</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-3">Save Settings</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="section-title">
+            <i class="fas fa-project-diagram"></i>
+            <span>{{ "My" if is_own_profile else profile_user['name'] + "'s" }} Projects</span>
+        </div>
+        
+        {% if user_projects|length > 0 %}
+        <div id="projects">
+            {% for project in user_projects %}
+                <a href="{{ url_for('projects.project', proj_id=project['id']) }}" class="text-decoration-none">
+                    <div id="project" class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                {{ project['name'] }}
+                                <span class="status-badge {% if project['enabled'] == 1 %}status-published{% else %}status-unpublished{% endif %}">
+                                    <i class="fas {% if project['enabled'] == 1 %}fa-globe{% else %}fa-eye-slash{% endif %}"></i>
+                                    {% if project['enabled'] == 1 %}Published{% else %}Unpublished{% endif %}
+                                </span>
+                            </h5>
+                            <p class="card-text">
+                                {% if project['description']|length > 100 %}
+                                    {{ project['description'][:100] }}...
+                                {% else %}
+                                    {{ project['description'] }}
+                                {% endif %}
+                            </p>
+                            <div class="project-meta">
+                                <div class="project-info">
+                                    <span class="project-date">
+                                        <i class="fas fa-calendar-alt me-1"></i> 
+                                        {{ project['create_time'].strftime('%b %d, %Y') if project['create_time'] else 'No date' }}
+                                    </span>
+                                </div>
+                                <button class="star-btn {% if project['id'] in starred_projects %}starred{% endif %}" 
+                                        onclick="toggleStar(event, '{{ project['id'] }}', this);">
+                                    <i class="star-icon {% if project['id'] in starred_projects %}fas{% else %}far{% endif %} fa-star"></i>
+                                    <span class="star-count">{{ star_counts.get(project['id'], 0) }}</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-projects">
+            <i class="fas fa-folder-open"></i>
+            <h3>No projects found</h3>
+            <p>{{ "You haven't" if is_own_profile else profile_user['name'] + " hasn't" }} created any projects yet.</p>
+            {% if is_own_profile %}
+            <a href="{{ url_for('projects.create_project') }}">
+                <button class="create-project-btn mt-3">
+                    <i class="fas fa-plus me-2"></i>Create Your First Project
+                </button>
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Star functionality
+        function toggleStar(event, projectId, button) {
+            // Prevent the click from navigating to the project page
+            event.preventDefault();
+            event.stopPropagation();
+            
+            const starIcon = button.querySelector('.star-icon');
+            const starCount = button.querySelector('.star-count');
+            
+            fetch(`/project/${projectId}/toggle_star`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Update star button appearance
+                    if (data.is_starred) {
+                        button.classList.add('starred');
+                        starIcon.classList.remove('far');
+                        starIcon.classList.add('fas');
+                    } else {
+                        button.classList.remove('starred');
+                        starIcon.classList.remove('fas');
+                        starIcon.classList.add('far');
+                    }
+                    
+                    // Update star count
+                    starCount.textContent = data.star_count;
+                    
+                    // Add a little animation
+                    starIcon.style.transform = 'scale(1.3)';
+                    setTimeout(() => {
+                        starIcon.style.transform = 'scale(1)';
+                    }, 300);
+                }
+            })
+            .catch(error => {
+                console.error('Error toggling star:', error);
+            });
+        }
+    </script>
+</body>
+</html>

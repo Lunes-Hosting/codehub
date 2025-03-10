@@ -453,7 +453,7 @@
                 <div class="project-meta">
                     <div class="project-meta-item">
                         <i class="fas fa-user"></i>
-                        <span>Owner ID: {{ project['owner'] }}</span>
+                        <span>Owner: <a href="{{ url_for('projects.user_profile', user_id=owner_info['id']) }}" class="owner-link">{{ owner_info['name'] }}</a></span>
                     </div>
                     {% if project['create_time'] %}
                     <div class="project-meta-item">
