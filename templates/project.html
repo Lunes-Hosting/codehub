@@ -513,7 +513,7 @@
                     {{ project_description_html | safe }}
                     
                     <!-- Deploy Me Button -->
-                    <button class="deploy-btn" onclick="window.location.href='https://betadash.lunes.host/servers/create?project_id=15'">
+                    <button class="deploy-btn" onclick="window.location.href='https://betadash.lunes.host/servers/create?project_id={{ project['id'] }}';">
                         <i class="fas fa-rocket"></i> Deploy Project
                     </button>
                 </div>
