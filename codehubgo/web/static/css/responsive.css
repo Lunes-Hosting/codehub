@@ -1,0 +1,64 @@
+/* 
+ * Responsive styles for Lunes Code Hub
+ */
+
+/* Small devices (landscape phones, less than 768px) */
+@media (max-width: 767.98px) {
+  .container {
+    padding: 15px;
+  }
+  
+  .navbar-search .input-group {
+    width: 100%;
+  }
+  
+  .project-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .project-actions {
+    margin-top: 1rem;
+  }
+  
+  .user-profile-header {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .user-avatar {
+    margin-right: 0;
+    margin-bottom: 1rem;
+  }
+  
+  .user-stats {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+/* Medium devices (tablets, less than 992px) */
+@media (max-width: 991.98px) {
+  .navbar-search {
+    margin: 0.5rem 0;
+  }
+  
+  .navbar-search .input-group {
+    width: 100%;
+  }
+  
+  .project-card .card-header {
+    flex-direction: column;
+  }
+  
+  .project-card .project-actions {
+    margin-top: 0.5rem;
+  }
+}
+
+/* Large devices (desktops, less than 1200px) */
+@media (max-width: 1199.98px) {
+  .container {
+    max-width: 960px;
+  }
+}

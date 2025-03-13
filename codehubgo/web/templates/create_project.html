@@ -1,0 +1,83 @@
+{{ define "content" }}
+<div class="row fade-in">
+    <div class="col-lg-8">
+        <div class="project-header mb-4">
+            <h1>Create New Project</h1>
+        </div>
+        
+        {{ if .Error }}
+        <div class="alert alert-danger">
+            {{ .Error }}
+        </div>
+        {{ end }}
+        
+        <div class="project-form mb-4">
+            <form method="POST" action="/project/create">
+                <div class="form-group mb-3">
+                    <label for="title" class="form-label">Title</label>
+                    <input type="text" class="form-control" id="title" name="title" value="{{ .Title }}" required>
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" id="description" name="description" rows="3" required>{{ .Description }}</textarea>
+                    <div class="form-text">A brief description of your project (max 200 characters)</div>
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label for="content" class="form-label">Content (Markdown)</label>
+                    <textarea class="form-control" id="content" name="content" rows="15" required>{{ .Content }}</textarea>
+                    <div class="form-text">You can use Markdown to format your content</div>
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label for="egg_id" class="form-label">Pterodactyl Egg ID (Optional)</label>
+                    <input type="text" class="form-control" id="egg_id" name="egg_id" value="{{ .EggID }}">
+                    <div class="form-text">Enter a Pterodactyl Egg ID to enable deployment for this project</div>
+                </div>
+                
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="public" name="public" {{ if .Public }}checked{{ end }}>
+                    <label class="form-check-label" for="public">
+                        Make this project public
+                    </label>
+                    <div class="form-text">Public projects can be viewed by anyone</div>
+                </div>
+                
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">Create Project</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="project-details mt-4 mt-lg-0">
+            <h3 class="mb-3">Markdown Guide</h3>
+            <div class="markdown-guide">
+                <p>You can use Markdown to format your project content:</p>
+                <ul>
+                    <li><code># Heading 1</code></li>
+                    <li><code>## Heading 2</code></li>
+                    <li><code>**Bold text**</code></li>
+                    <li><code>*Italic text*</code></li>
+                    <li><code>[Link text](URL)</code></li>
+                    <li><code>![Image alt](Image URL)</code></li>
+                    <li><code>```code block```</code></li>
+                </ul>
+                <p>For more information, check out the <a href="https://www.markdownguide.org/basic-syntax/" target="_blank">Markdown Guide</a>.</p>
+            </div>
+        </div>
+        
+        <div class="project-details mt-4">
+            <h3 class="mb-3">Project Tips</h3>
+            <ul>
+                <li>Give your project a clear, descriptive title</li>
+                <li>Include detailed instructions in the content</li>
+                <li>Use Markdown to format your content for better readability</li>
+                <li>Consider making your project public to share with others</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{{ end }}

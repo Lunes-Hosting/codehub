@@ -1,0 +1,97 @@
+{{ define "content" }}
+<div class="row fade-in">
+    <div class="col-lg-8">
+        <div class="project-header mb-4">
+            <h1>Search Results</h1>
+        </div>
+        
+        <div class="search-form mb-4">
+            <form action="/search" method="GET">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search projects..." name="q" value="{{ .Query }}">
+                    <button class="btn btn-outline-primary" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        {{ if .Results }}
+        <p class="mb-3">Found {{ len .Results }} result(s) for "{{ .Query }}"</p>
+        
+        <div class="project-list">
+            {{ range .Results }}
+            <div class="project-card">
+                <div class="card-header">
+                    <h5 class="card-title">
+                        <a href="/project/{{ .ID }}">{{ .Title }}</a>
+                        {{ if .Public }}
+                        <span class="badge badge-public ms-2">Public</span>
+                        {{ else }}
+                        <span class="badge badge-private ms-2">Private</span>
+                        {{ end }}
+                    </h5>
+                    <div class="project-actions">
+                        <a href="/project/{{ .ID }}" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-eye"></i> View
+                        </a>
+                        {{ if eq .UserID $.UserID }}
+                        <a href="/project/{{ .ID }}?edit=true" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        {{ end }}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">{{ .Description }}</p>
+                </div>
+                <div class="card-footer">
+                    <div class="project-meta">
+                        <span><i class="far fa-calendar-alt"></i> {{ .CreatedAt }}</span>
+                        <span><i class="fas fa-user"></i> <a href="/user/{{ .UserID }}">{{ .Username }}</a></span>
+                        <span><i class="fas fa-star"></i> {{ .Stars }}</span>
+                    </div>
+                </div>
+            </div>
+            {{ end }}
+        </div>
+        {{ else }}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>No results found for "{{ .Query }}". Try a different search term.
+        </div>
+        {{ end }}
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="project-details mt-4 mt-lg-0">
+            <h3 class="mb-3">Search Tips</h3>
+            <ul>
+                <li>Use specific keywords related to the project you're looking for</li>
+                <li>Try searching by username to find projects by a specific user</li>
+                <li>Search results include both public projects and your own private projects</li>
+            </ul>
+        </div>
+        
+        <div class="project-details mt-4">
+            <h3 class="mb-3">Quick Links</h3>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item bg-transparent border-0 ps-0">
+                    <a href="/projects" class="text-decoration-none">
+                        <i class="fas fa-project-diagram me-2"></i>All Projects
+                    </a>
+                </li>
+                <li class="list-group-item bg-transparent border-0 ps-0">
+                    <a href="/project/create" class="text-decoration-none">
+                        <i class="fas fa-plus me-2"></i>Create New Project
+                    </a>
+                </li>
+                <li class="list-group-item bg-transparent border-0 ps-0">
+                    <a href="/" class="text-decoration-none">
+                        <i class="fas fa-home me-2"></i>Dashboard
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{{ end }}

@@ -1,0 +1,21 @@
+{{ define "content" }}
+<div class="error-container text-center fade-in">
+    <div class="error-code">
+        <h1>{{ .ErrorCode }}</h1>
+    </div>
+    
+    <div class="error-message mb-4">
+        <h2>{{ .ErrorMessage }}</h2>
+        <p>{{ .ErrorDescription }}</p>
+    </div>
+    
+    <div class="error-actions">
+        <a href="/" class="btn btn-primary">
+            <i class="fas fa-home me-2"></i>Go to Dashboard
+        </a>
+        <a href="javascript:history.back()" class="btn btn-outline-primary ms-2">
+            <i class="fas fa-arrow-left me-2"></i>Go Back
+        </a>
+    </div>
+</div>
+{{ end }}

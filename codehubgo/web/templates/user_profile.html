@@ -1,0 +1,144 @@
+{{ define "content" }}
+<div class="row fade-in">
+    <div class="col-lg-8">
+        <div class="project-header mb-4">
+            <h1>{{ .User.Username }}'s Profile</h1>
+        </div>
+        
+        <div class="project-details mb-4">
+            <div class="user-info">
+                <div class="user-avatar mb-3">
+                    <img src="https://www.gravatar.com/avatar/{{ .User.EmailHash }}?s=200&d=identicon" alt="{{ .User.Username }}" class="rounded-circle">
+                </div>
+                
+                <div class="user-meta mb-3">
+                    <p><i class="fas fa-user me-2"></i>Username: {{ .User.Username }}</p>
+                    {{ if or .User.ShowEmail (eq .User.ID .CurrentUserID) }}
+                    <p><i class="fas fa-envelope me-2"></i>Email: {{ .User.Email }}</p>
+                    {{ end }}
+                    <p><i class="fas fa-calendar-alt me-2"></i>Joined: {{ .User.CreatedAt }}</p>
+                </div>
+                
+                {{ if eq .User.ID .CurrentUserID }}
+                <div class="user-settings mb-3">
+                    <h4 class="mb-3">Profile Settings</h4>
+                    <form method="POST" action="/user/toggle-email-visibility">
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="show_email" name="show_email" {{ if .User.ShowEmail }}checked{{ end }}>
+                            <label class="form-check-label" for="show_email">
+                                Show my email to other users
+                            </label>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Settings</button>
+                    </form>
+                </div>
+                {{ end }}
+            </div>
+            
+            <div class="user-stats mt-4">
+                <div class="stat-item">
+                    <div class="stat-value">{{ .ProjectCount }}</div>
+                    <div class="stat-label">Projects</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">{{ .PublicCount }}</div>
+                    <div class="stat-label">Public</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">{{ .StarCount }}</div>
+                    <div class="stat-label">Stars</div>
+                </div>
+            </div>
+        </div>
+        
+        {{ if .Projects }}
+        <h3 class="mb-3">{{ if eq .User.ID .CurrentUserID }}My{{ else }}{{ .User.Username }}'s{{ end }} Projects</h3>
+        <div class="project-list">
+            {{ range .Projects }}
+            <div class="project-card">
+                <div class="card-header">
+                    <h5 class="card-title">
+                        <a href="/project/{{ .ID }}">{{ .Title }}</a>
+                        {{ if .Public }}
+                        <span class="badge badge-public ms-2">Public</span>
+                        {{ else }}
+                        <span class="badge badge-private ms-2">Private</span>
+                        {{ end }}
+                    </h5>
+                    <div class="project-actions">
+                        <a href="/project/{{ .ID }}" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-eye"></i> View
+                        </a>
+                        {{ if eq $.User.ID $.CurrentUserID }}
+                        <a href="/project/{{ .ID }}?edit=true" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        {{ end }}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">{{ .Description }}</p>
+                </div>
+                <div class="card-footer">
+                    <div class="project-meta">
+                        <span><i class="far fa-calendar-alt"></i> {{ .CreatedAt }}</span>
+                        <span><i class="fas fa-star"></i> {{ .Stars }}</span>
+                    </div>
+                </div>
+            </div>
+            {{ end }}
+        </div>
+        {{ else }}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            {{ if eq .User.ID .CurrentUserID }}
+            You don't have any projects yet. <a href="/project/create" class="alert-link">Create your first project</a> to get started!
+            {{ else }}
+            {{ .User.Username }} doesn't have any public projects yet.
+            {{ end }}
+        </div>
+        {{ end }}
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="project-details mt-4 mt-lg-0">
+            <h3 class="mb-3">Quick Links</h3>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item bg-transparent border-0 ps-0">
+                    <a href="/projects" class="text-decoration-none">
+                        <i class="fas fa-project-diagram me-2"></i>All Projects
+                    </a>
+                </li>
+                {{ if eq .User.ID .CurrentUserID }}
+                <li class="list-group-item bg-transparent border-0 ps-0">
+                    <a href="/project/create" class="text-decoration-none">
+                        <i class="fas fa-plus me-2"></i>Create New Project
+                    </a>
+                </li>
+                {{ end }}
+                <li class="list-group-item bg-transparent border-0 ps-0">
+                    <a href="/" class="text-decoration-none">
+                        <i class="fas fa-home me-2"></i>Dashboard
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        {{ if .StarredProjects }}
+        <div class="project-details mt-4">
+            <h3 class="mb-3">Starred Projects</h3>
+            {{ range .StarredProjects }}
+            <div class="card mb-2 bg-transparent border-0">
+                <div class="card-body p-0">
+                    <h5 class="card-title mb-1">
+                        <a href="/project/{{ .ID }}">{{ .Title }}</a>
+                    </h5>
+                    <p class="card-text text-muted small">{{ .Description }}</p>
+                </div>
+            </div>
+            {{ end }}
+        </div>
+        {{ end }}
+    </div>
+</div>
+{{ end }}

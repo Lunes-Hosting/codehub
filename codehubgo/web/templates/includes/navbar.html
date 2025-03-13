@@ -1,0 +1,97 @@
+{{ define "navbar.html" }}
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <i class="fas fa-code me-2"></i>Lunes Code Hub
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link {{ if eq .CurrentPage "projects" }}active{{ end }}" 
+                       href="/projects">
+                        <i class="fas fa-project-diagram me-1"></i> Projects
+                    </a>
+                </li>
+            </ul>
+            
+            <!-- Search form -->
+            <form class="d-flex navbar-search me-3" action="/search" method="GET">
+                <div class="input-group">
+                    <input class="form-control search-input" type="search" name="q" placeholder="Search projects..." aria-label="Search">
+                    <button class="btn search-btn" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </form>
+            
+            <div class="d-flex align-items-center">
+                <ul class="navbar-nav ms-auto">
+                    {{ if .Username }}
+                    <li class="nav-item">
+                        <a class="nav-link {{ if eq .CurrentPage "create_project" }}active{{ end }}" 
+                           href="/project/create">
+                            <i class="fas fa-plus me-1"></i> New Project
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" 
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle me-1"></i> {{ .Username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li>
+                                {{ if .UserID }}
+                                <a class="dropdown-item" href="/user/{{ .UserID }}">
+                                    <i class="fas fa-user me-2"></i> My Profile
+                                </a>
+                                {{ end }}
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" href="/auth/logout">
+                                    <i class="fas fa-sign-out-alt me-2"></i> Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    {{ else }}
+                    <li class="nav-item">
+                        <a class="nav-link {{ if eq .CurrentPage "login" }}active{{ end }}" 
+                           href="/auth/login">
+                            <i class="fas fa-sign-in-alt me-1"></i> Login
+                        </a>
+                    </li>
+                    {{ end }}
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<style>
+    /* Dropdown menu styling */
+    .dropdown-menu {
+        background-color: var(--medium-blue-grey);
+        border: none;
+        border-radius: 6px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        margin-top: 0.5rem;
+        padding: 0.5rem 0;
+    }
+    
+    .dropdown-item {
+        color: var(--text-light);
+        padding: 0.5rem 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .dropdown-item:hover, .dropdown-item:focus {
+        background-color: var(--card-bg);
+        color: var(--light-blue);
+    }
+</style>
+{{ end }}

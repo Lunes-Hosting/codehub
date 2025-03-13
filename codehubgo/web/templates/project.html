@@ -1,0 +1,375 @@
+{{ define "content" }}
+<div class="row fade-in">
+    <div class="col-lg-8">
+        <div class="project-header d-flex justify-content-between align-items-center mb-4">
+            <h1>{{ .Project.Title }}</h1>
+            <div class="project-actions">
+                {{ if eq .Project.Owner .User.UserID }}
+                <a href="/project/{{ .Project.ID }}?edit=true" class="btn btn-outline-primary">
+                    <i class="fas fa-edit me-1"></i> Edit
+                </a>
+                <button class="btn btn-outline-danger delete-project" data-id="{{ .Project.ID }}" data-title="{{ .Project.Title }}">
+                    <i class="fas fa-trash me-1"></i> Delete
+                </button>
+                {{ end }}
+                <button class="btn {{ if .Project.Starred }}btn-warning{{ else }}btn-outline-warning{{ end }} star-btn" data-id="{{ .Project.ID }}">
+                    <i class="fas fa-star me-1"></i> <span class="star-count">{{ .Project.Stars }}</span>
+                </button>
+            </div>
+        </div>
+        
+        <div class="project-details mb-4">
+            <div class="project-meta mb-3">
+                <span class="badge {{ if .Project.Public }}badge-public{{ else }}badge-private{{ end }} me-2">
+                    {{ if .Project.Public }}Public{{ else }}Private{{ end }}
+                </span>
+                <span class="me-3"><i class="far fa-calendar-alt me-1"></i> Created: {{ .Project.CreatedAt }}</span>
+                <span class="me-3"><i class="far fa-clock me-1"></i> Updated: {{ .Project.UpdatedAt }}</span>
+                <span><i class="fas fa-user me-1"></i> By: <a href="/user/{{ .Project.Owner }}">{{ .Project.OwnerName }}</a></span>
+            </div>
+            
+            <div class="project-description markdown-content mb-4">
+                {{ .ProjectDescriptionHTML }}
+            </div>
+            
+            {{ if eq .Project.Owner .User.UserID }}
+            <div class="d-flex mb-4">
+                <form method="POST" action="/project/{{ .Project.ID }}/toggle-publish" class="me-2">
+                    <button type="submit" class="btn btn-sm {{ if .Project.Public }}btn-outline-secondary{{ else }}btn-outline-success{{ end }}">
+                        {{ if .Project.Public }}
+                        <i class="fas fa-lock me-1"></i> Make Private
+                        {{ else }}
+                        <i class="fas fa-globe me-1"></i> Make Public
+                        {{ end }}
+                    </button>
+                </form>
+            </div>
+            {{ end }}
+        </div>
+        
+        {{ if .IsEdit }}
+        <div class="project-edit-form mb-4">
+            <h3 class="mb-3">Edit Project</h3>
+            <form method="POST" action="/project/{{ .Project.ID }}">
+                <div class="form-group mb-3">
+                    <label for="title" class="form-label">Title</label>
+                    <input type="text" class="form-control" id="title" name="title" value="{{ .Project.Title }}" required>
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" id="description" name="description" rows="5" required>{{ .Project.Description }}</textarea>
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label for="content" class="form-label">Content (Markdown)</label>
+                    <textarea class="form-control" id="content" name="content" rows="15" required>{{ .Project.Content }}</textarea>
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label for="egg_id" class="form-label">Pterodactyl Egg ID (Optional)</label>
+                    <input type="text" class="form-control" id="egg_id" name="egg_id" value="{{ .Project.EggID }}">
+                    <div class="form-text">Enter a Pterodactyl Egg ID to enable deployment for this project.</div>
+                </div>
+                
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+        {{ else }}
+        <div class="project-content mb-4">
+            <h3 class="mb-3">Project Content</h3>
+            <div class="content-preview markdown-body">
+                {{ .RenderedContent }}
+            </div>
+        </div>
+        
+        {{ if .Project.EggID }}
+        <div class="project-deployment mb-4">
+            <h3 class="mb-3">Deployment</h3>
+            <div class="deployment-options">
+                <button class="btn btn-success deploy-btn" data-id="{{ .Project.ID }}">
+                    <i class="fas fa-rocket me-1"></i> Deploy Project
+                </button>
+            </div>
+            
+            <div class="deployment-form mt-3 d-none">
+                <form id="deploymentForm" data-id="{{ .Project.ID }}">
+                    <div id="egg-variables">
+                        <!-- Egg variables will be loaded here via AJAX -->
+                        <div class="text-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid mt-3">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane me-1"></i> Submit Deployment
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {{ end }}
+        {{ end }}
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="project-details mt-4 mt-lg-0">
+            <h3 class="mb-3">Project Actions</h3>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item bg-transparent border-0 ps-0">
+                    <a href="/projects" class="text-decoration-none">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Projects
+                    </a>
+                </li>
+                {{ if eq .Project.Owner .User.UserID }}
+                <li class="list-group-item bg-transparent border-0 ps-0">
+                    <a href="/project/{{ .Project.ID }}?edit=true" class="text-decoration-none">
+                        <i class="fas fa-edit me-2"></i>Edit Project
+                    </a>
+                </li>
+                <li class="list-group-item bg-transparent border-0 ps-0">
+                    <a href="#" class="text-decoration-none text-danger delete-project" data-id="{{ .Project.ID }}" data-title="{{ .Project.Title }}">
+                        <i class="fas fa-trash me-2"></i>Delete Project
+                    </a>
+                </li>
+                {{ end }}
+                {{ if .Project.EggID }}
+                <li class="list-group-item bg-transparent border-0 ps-0">
+                    <a href="#" class="text-decoration-none deploy-btn" data-id="{{ .Project.ID }}">
+                        <i class="fas fa-rocket me-2"></i>Deploy Project
+                    </a>
+                </li>
+                {{ end }}
+            </ul>
+        </div>
+        
+        {{ if .RelatedProjects }}
+        <div class="project-details mt-4">
+            <h3 class="mb-3">Related Projects</h3>
+            {{ range .RelatedProjects }}
+            <div class="card mb-2 bg-transparent border-0">
+                <div class="card-body p-0">
+                    <h5 class="card-title mb-1">
+                        <a href="/project/{{ .ID }}">{{ .Title }}</a>
+                    </h5>
+                    <p class="card-text text-muted small">{{ .Description }}</p>
+                </div>
+            </div>
+            {{ end }}
+        </div>
+        {{ end }}
+    </div>
+</div>
+
+<!-- Delete Project Modal -->
+<div class="modal fade" id="deleteProjectModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Project</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete "<span id="projectTitle"></span>"?</p>
+                <p class="text-danger">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteProjectForm" method="POST">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{{ end }}
+
+{{ define "head" }}
+<!-- Include Markdown CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.1.0/github-markdown.min.css">
+<style>
+    /* Project styles */
+    .project-header h1 {
+        margin-bottom: 0;
+    }
+    
+    .project-meta {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+    }
+    
+    .badge-public {
+        background-color: rgba(76, 175, 80, 0.2);
+        color: #4caf50;
+        border: 1px solid rgba(76, 175, 80, 0.4);
+    }
+    
+    .badge-private {
+        background-color: rgba(255, 152, 0, 0.2);
+        color: #ff9800;
+        border: 1px solid rgba(255, 152, 0, 0.4);
+    }
+    
+    /* Markdown content styles */
+    .markdown-content {
+        overflow: hidden;
+    }
+    
+    .markdown-content h1, 
+    .markdown-content h2, 
+    .markdown-content h3, 
+    .markdown-content h4, 
+    .markdown-content h5, 
+    .markdown-content h6 {
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+        color: var(--text-light);
+    }
+    
+    .markdown-content p {
+        margin-bottom: 1rem;
+    }
+    
+    .markdown-content code {
+        background-color: rgba(255, 255, 255, 0.1);
+        padding: 0.2rem 0.4rem;
+        border-radius: 3px;
+        font-family: monospace;
+    }
+    
+    .markdown-content pre {
+        background-color: rgba(0, 0, 0, 0.2);
+        padding: 1rem;
+        border-radius: 4px;
+        overflow-x: auto;
+    }
+    
+    .markdown-content blockquote {
+        border-left: 3px solid var(--light-blue);
+        padding-left: 1rem;
+        margin-left: 0;
+        color: var(--text-muted);
+    }
+    
+    .markdown-content a {
+        color: var(--light-blue);
+        text-decoration: none;
+    }
+    
+    .markdown-content a:hover {
+        text-decoration: underline;
+    }
+    
+    .markdown-content img {
+        max-width: 100%;
+        border-radius: 4px;
+    }
+    
+    .markdown-content ul, 
+    .markdown-content ol {
+        padding-left: 1.5rem;
+    }
+</style>
+{{ end }}
+
+{{ define "scripts" }}
+<!-- Include Marked.js for Markdown parsing -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Delete project modal
+        const deleteButtons = document.querySelectorAll('.delete-project');
+        const deleteForm = document.getElementById('deleteProjectForm');
+        const projectTitleSpan = document.getElementById('projectTitle');
+        
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const projectId = this.getAttribute('data-id');
+                const projectTitle = this.getAttribute('data-title');
+                
+                deleteForm.action = `/project/${projectId}/delete`;
+                projectTitleSpan.textContent = projectTitle;
+                
+                const deleteModal = new bootstrap.Modal(document.getElementById('deleteProjectModal'));
+                deleteModal.show();
+            });
+        });
+        
+        // Star functionality
+        const starButton = document.querySelector('.star-btn');
+        if (starButton) {
+            starButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const projectId = this.getAttribute('data-id');
+                
+                fetch(`/project/${projectId}/toggle-star`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update star count
+                        const starCount = this.querySelector('.star-count');
+                        starCount.textContent = data.stars;
+                        
+                        // Toggle button style
+                        if (data.starred) {
+                            this.classList.remove('btn-outline-warning');
+                            this.classList.add('btn-warning');
+                            
+                            // Add animation
+                            const starIcon = this.querySelector('i.fa-star');
+                            if (starIcon) {
+                                starIcon.classList.add('animate-star');
+                                setTimeout(() => {
+                                    starIcon.classList.remove('animate-star');
+                                }, 300);
+                            }
+                        } else {
+                            this.classList.remove('btn-warning');
+                            this.classList.add('btn-outline-warning');
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+        }
+        
+        // Render Markdown content
+        const markdownElements = document.querySelectorAll('.markdown-content');
+        markdownElements.forEach(element => {
+            const content = element.innerHTML.trim();
+            if (content && !content.startsWith('<')) {
+                // Only parse if it's not already HTML
+                const html = marked.parse(content);
+                element.innerHTML = html;
+            }
+        });
+    });
+</script>
+<style>
+    @keyframes star-pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.3); }
+        100% { transform: scale(1); }
+    }
+    
+    .animate-star {
+        animation: star-pulse 0.3s ease-in-out;
+        color: #f1c40f;
+    }
+</style>
+{{ end }}

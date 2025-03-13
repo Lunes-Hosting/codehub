@@ -1,0 +1,104 @@
+/* 
+ * Form styles for Lunes Code Hub
+ */
+
+.auth-form {
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin: 2rem auto;
+  max-width: 500px;
+  padding: 2rem;
+}
+
+.auth-form h2 {
+  color: var(--text-light);
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.auth-form .form-group {
+  margin-bottom: 1.25rem;
+}
+
+.auth-form .form-control {
+  background-color: var(--input-bg);
+  border: 1px solid rgba(236, 240, 241, 0.2);
+  color: var(--text-light);
+  height: calc(2.5rem + 2px);
+  padding: 0.5rem 0.75rem;
+}
+
+.auth-form .form-control:focus {
+  background-color: var(--input-bg);
+  border-color: var(--light-blue);
+  box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+  color: var(--text-light);
+}
+
+.auth-form .form-text {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.auth-form .btn-primary {
+  background-color: var(--accent-blue);
+  border-color: var(--accent-blue);
+  font-weight: 500;
+  padding: 0.5rem 1.5rem;
+  width: 100%;
+}
+
+.auth-form .btn-primary:hover {
+  background-color: var(--light-blue);
+  border-color: var(--light-blue);
+}
+
+.auth-form .auth-links {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.auth-form .auth-links a {
+  color: var(--text-light);
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.auth-form .auth-links a:hover {
+  color: var(--light-blue);
+}
+
+/* Project form */
+.project-form {
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+}
+
+.project-form .form-group {
+  margin-bottom: 1.25rem;
+}
+
+.project-form textarea.form-control {
+  min-height: 150px;
+}
+
+.form-check-input {
+  background-color: var(--input-bg);
+  border: 1px solid rgba(236, 240, 241, 0.3);
+}
+
+.form-check-input:checked {
+  background-color: var(--light-blue);
+  border-color: var(--light-blue);
+}
+
+.form-check-label {
+  color: var(--text-light);
+}

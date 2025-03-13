@@ -1,0 +1,469 @@
+{{ define "content" }}
+<div class="d-flex justify-content-between align-items-center mb-4 fade-in">
+    <h1 class="mb-0"><i class="fas fa-project-diagram me-2"></i>Projects</h1>
+    <a href="/project/create">
+        <button class="create-project-btn">
+            <i class="fas fa-plus me-2"></i>Create Project
+        </button>
+    </a>
+</div>
+
+<div class="tab-navigation">
+    <button class="tab-btn active" data-tab="my-projects">
+        <i class="fas fa-user-shield me-2"></i>My Projects
+    </button>
+    <button class="tab-btn" data-tab="all-projects">
+        <i class="fas fa-globe me-2"></i>All Projects
+    </button>
+</div>
+
+<!-- My Projects Tab -->
+<div id="my-projects" class="tab-content active">
+    {{ if .Projects }}
+    <div id="projects">
+        {{ range .Projects }}
+        <a href="/project/{{ .ID }}" class="text-decoration-none">
+            <div id="project" class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        {{ .Title }}
+                        <span class="status-badge {{ if .Public }}status-published{{ else }}status-unpublished{{ end }}">
+                            <i class="fas {{ if .Public }}fa-globe{{ else }}fa-eye-slash{{ end }}"></i>
+                            {{ if .Public }}Published{{ else }}Unpublished{{ end }}
+                        </span>
+                    </h5>
+                    <div class="card-text markdown-content">
+                        {{ if gt (len .Description) 100 }}
+                            {{ slice .Description 0 100 }}...
+                        {{ else }}
+                            {{ .Description }}
+                        {{ end }}
+                    </div>
+                    <div class="project-meta">
+                        <div class="project-info">
+                            <span><i class="far fa-calendar-alt"></i> {{ .CreatedAt }}</span>
+                            <span><i class="fas fa-user"></i> {{ .OwnerName }}</span>
+                        </div>
+                        <button class="star-btn {{ if .Starred }}starred{{ end }}" data-id="{{ .ID }}">
+                            <span class="star-icon"><i class="fas fa-star"></i></span>
+                            <span class="star-count">{{ .Stars }}</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </a>
+        {{ end }}
+    </div>
+    {{ else }}
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle me-2"></i>You don't have any projects yet. 
+        <a href="/project/create" class="alert-link">Create your first project</a> to get started!
+    </div>
+    {{ end }}
+</div>
+
+<!-- All Projects Tab -->
+<div id="all-projects" class="tab-content">
+    {{ if .PublicProjects }}
+    <div id="projects">
+        {{ range .PublicProjects }}
+        <a href="/project/{{ .ID }}" class="text-decoration-none">
+            <div id="project" class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        {{ .Title }}
+                        <span class="status-badge status-published">
+                            <i class="fas fa-globe"></i>
+                            Published
+                        </span>
+                    </h5>
+                    <div class="card-text markdown-content">
+                        {{ if gt (len .Description) 100 }}
+                            {{ slice .Description 0 100 }}...
+                        {{ else }}
+                            {{ .Description }}
+                        {{ end }}
+                    </div>
+                    <div class="project-meta">
+                        <div class="project-info">
+                            <span><i class="far fa-calendar-alt"></i> {{ .CreatedAt }}</span>
+                            <span><i class="fas fa-user"></i> {{ .OwnerName }}</span>
+                        </div>
+                        <button class="star-btn {{ if .Starred }}starred{{ end }}" data-id="{{ .ID }}">
+                            <span class="star-icon"><i class="fas fa-star"></i></span>
+                            <span class="star-count">{{ .Stars }}</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </a>
+        {{ end }}
+    </div>
+    {{ else }}
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle me-2"></i>There are no public projects available.
+    </div>
+    {{ end }}
+</div>
+
+<div class="section-divider mt-5">
+    <div class="section-title">Project Stats</div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-value">{{ .TotalProjects }}</div>
+            <div class="stat-label">Total</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-value">{{ .PublicCount }}</div>
+            <div class="stat-label">Public</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-value">{{ .PrivateProjects }}</div>
+            <div class="stat-label">Private</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-value">{{ .StarredProjects }}</div>
+            <div class="stat-label">Starred</div>
+        </div>
+    </div>
+</div>
+
+{{ end }}
+
+{{ define "head" }}
+<!-- Include Markdown CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.1.0/github-markdown.min.css">
+<style>
+    .section-divider {
+        margin: 3rem 0 2rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+    }
+    
+    .section-title {
+        display: inline-block;
+        background-color: var(--bg-dark);
+        padding: 0 1rem;
+        position: absolute;
+        top: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: var(--text-muted);
+        font-size: 1rem;
+        font-weight: 500;
+    }
+    
+    .tab-navigation {
+        display: flex;
+        margin-bottom: 2rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .tab-btn {
+        padding: 0.75rem 1.5rem;
+        background: transparent;
+        border: none;
+        color: var(--text-muted);
+        font-weight: 500;
+        position: relative;
+        cursor: pointer;
+    }
+    
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        margin-left: 10px;
+    }
+    
+    .status-published {
+        background-color: rgba(76, 175, 80, 0.2);
+        color: #4caf50;
+        border: 1px solid rgba(76, 175, 80, 0.4);
+    }
+    
+    .status-unpublished {
+        background-color: rgba(255, 152, 0, 0.2);
+        color: #ff9800;
+        border: 1px solid rgba(255, 152, 0, 0.4);
+    }
+    
+    .tab-btn.active {
+        color: var(--light-blue);
+    }
+    
+    .tab-btn.active::after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(to right, var(--light-blue), var(--accent-blue));
+    }
+    
+    .tab-btn:hover:not(.active) {
+        color: var(--text-light);
+    }
+    
+    .tab-content {
+        display: none;
+    }
+    
+    .tab-content.active {
+        display: block;
+    }
+    
+    /* Star button styles */
+    .star-btn {
+        background-color: transparent;
+        border: none;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        padding: 0.25rem 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border-radius: 4px;
+    }
+    
+    .star-btn:hover {
+        color: var(--text-light);
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+    
+    .star-btn.starred {
+        color: #f1c40f;
+    }
+    
+    .star-btn.starred:hover {
+        background-color: rgba(241, 196, 15, 0.1);
+    }
+    
+    .star-btn .star-icon {
+        transition: transform 0.3s ease;
+    }
+    
+    .star-btn:hover .star-icon {
+        transform: scale(1.2);
+    }
+    
+    .project-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 0.5rem;
+    }
+    
+    .project-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .create-project-btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        background: linear-gradient(to right, var(--light-blue), var(--accent-blue));
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+    
+    .create-project-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .stat-card {
+        background-color: var(--bg-dark);
+        border-radius: 8px;
+        padding: 1.5rem;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--light-blue);
+        margin-bottom: 0.5rem;
+    }
+    
+    .stat-label {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    /* Markdown content styles */
+    .markdown-content {
+        overflow: hidden;
+        margin-bottom: 1rem;
+    }
+    
+    .markdown-content h1, 
+    .markdown-content h2, 
+    .markdown-content h3, 
+    .markdown-content h4, 
+    .markdown-content h5, 
+    .markdown-content h6 {
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+        color: var(--text-light);
+    }
+    
+    .markdown-content p {
+        margin-bottom: 0.5rem;
+    }
+    
+    .markdown-content code {
+        background-color: rgba(255, 255, 255, 0.1);
+        padding: 0.2rem 0.4rem;
+        border-radius: 3px;
+        font-family: monospace;
+    }
+    
+    .markdown-content pre {
+        background-color: rgba(0, 0, 0, 0.2);
+        padding: 1rem;
+        border-radius: 4px;
+        overflow-x: auto;
+    }
+    
+    .markdown-content blockquote {
+        border-left: 3px solid var(--light-blue);
+        padding-left: 1rem;
+        margin-left: 0;
+        color: var(--text-muted);
+    }
+    
+    .markdown-content a {
+        color: var(--light-blue);
+        text-decoration: none;
+    }
+    
+    .markdown-content a:hover {
+        text-decoration: underline;
+    }
+    
+    .markdown-content img {
+        max-width: 100%;
+        border-radius: 4px;
+    }
+    
+    .markdown-content ul, 
+    .markdown-content ol {
+        padding-left: 1.5rem;
+    }
+</style>
+{{ end }}
+
+{{ define "scripts" }}
+<!-- Include Marked.js for Markdown parsing -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Tab navigation
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const tabId = this.getAttribute('data-tab');
+                
+                // Remove active class from all buttons and contents
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+                
+                // Add active class to current button and content
+                this.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+        
+        // Star functionality
+        const starButtons = document.querySelectorAll('.star-btn');
+        
+        starButtons.forEach(button => {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                
+                const projectId = this.getAttribute('data-id');
+                toggleStar(event, projectId, this);
+            });
+        });
+        
+        function toggleStar(event, projectId, button) {
+            fetch(`/project/${projectId}/toggle-star`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update star count
+                    const starCount = button.querySelector('.star-count');
+                    starCount.textContent = data.stars;
+                    
+                    // Toggle starred class
+                    if (data.starred) {
+                        button.classList.add('starred');
+                    } else {
+                        button.classList.remove('starred');
+                    }
+                    
+                    // Add animation
+                    const starIcon = button.querySelector('.star-icon');
+                    starIcon.classList.add('animate-star');
+                    setTimeout(() => {
+                        starIcon.classList.remove('animate-star');
+                    }, 300);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+        
+        // Render Markdown content
+        const markdownElements = document.querySelectorAll('.markdown-content');
+        markdownElements.forEach(element => {
+            const content = element.textContent.trim();
+            if (content) {
+                // Parse markdown to HTML
+                const html = marked.parse(content);
+                element.innerHTML = html;
+            }
+        });
+    });
+</script>
+{{ end }}

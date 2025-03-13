@@ -1,0 +1,242 @@
+/* 
+ * Project styles for Lunes Code Hub
+ */
+
+.project-card {
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.project-card:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  transform: translateY(-5px);
+}
+
+.project-card .card-header {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(236, 240, 241, 0.1);
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+}
+
+.project-card .card-title {
+  color: var(--text-light);
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin-bottom: 0;
+}
+
+.project-card .card-body {
+  padding: 1.25rem;
+}
+
+.project-card .card-text {
+  color: var(--text-light);
+  margin-bottom: 1rem;
+}
+
+.project-card .card-footer {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-top: 1px solid rgba(236, 240, 241, 0.1);
+  color: var(--text-muted);
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 1.25rem;
+}
+
+.project-meta {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.project-meta i {
+  margin-right: 0.25rem;
+}
+
+.project-meta span {
+  margin-right: 1rem;
+}
+
+/* Project actions */
+.project-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.project-actions .btn {
+  align-items: center;
+  display: flex;
+  font-size: 0.875rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.project-actions .btn i {
+  margin-right: 0.25rem;
+}
+
+/* Project details */
+.project-header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.project-title {
+  color: var(--text-light);
+  font-size: 1.75rem;
+  font-weight: 500;
+  margin-bottom: 0;
+}
+
+.project-details {
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+}
+
+.project-content {
+  color: var(--text-light);
+  line-height: 1.6;
+}
+
+.project-content h1, 
+.project-content h2, 
+.project-content h3, 
+.project-content h4, 
+.project-content h5, 
+.project-content h6 {
+  color: var(--text-light);
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.project-content pre {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  color: var(--text-light);
+  padding: 1rem;
+}
+
+.project-content code {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+  color: var(--text-light);
+  font-family: 'Courier New', Courier, monospace;
+  padding: 0.2rem 0.4rem;
+}
+
+.project-content blockquote {
+  border-left: 4px solid var(--light-blue);
+  color: var(--text-muted);
+  margin-left: 0;
+  padding-left: 1rem;
+}
+
+/* Project status badges */
+.badge {
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.35rem 0.65rem;
+}
+
+.badge-public {
+  background-color: rgba(46, 204, 113, 0.2);
+  color: var(--success);
+}
+
+.badge-private {
+  background-color: rgba(231, 76, 60, 0.2);
+  color: var(--danger);
+}
+
+/* Star button */
+.btn-star {
+  background-color: transparent;
+  border: 1px solid var(--warning);
+  color: var(--warning);
+}
+
+.btn-star:hover {
+  background-color: rgba(243, 156, 18, 0.1);
+  color: var(--warning);
+}
+
+.btn-star.active {
+  background-color: var(--warning);
+  color: var(--text-light);
+}
+
+/* User profile */
+.user-profile {
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+}
+
+.user-profile-header {
+  align-items: center;
+  display: flex;
+  margin-bottom: 1.5rem;
+}
+
+.user-avatar {
+  background-color: var(--accent-blue);
+  border-radius: 50%;
+  color: var(--text-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  height: 80px;
+  margin-right: 1.5rem;
+  width: 80px;
+}
+
+.user-info h2 {
+  color: var(--text-light);
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.user-info p {
+  color: var(--text-muted);
+  margin-bottom: 0;
+}
+
+.user-stats {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-item {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  padding: 1rem;
+  text-align: center;
+  flex: 1;
+}
+
+.stat-value {
+  color: var(--light-blue);
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.stat-label {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
