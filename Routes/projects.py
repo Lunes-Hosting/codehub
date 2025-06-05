@@ -9,9 +9,9 @@ from wtforms.validators import DataRequired, Length
 import datetime
 from Managers.User import User
 import markdown
-import requests
 import json
 from utils.search import search_projects
+from security import safe_requests
 
 
 projects = Blueprint('projects', __name__)
@@ -29,7 +29,7 @@ def get_egg_variables():
         return jsonify({'error': 'No egg selected'}), 400
     
     # Fetch the available eggs and their variables
-    egg_info = requests.get(f"{PTERODACTYL_URL}/api/application/nests/{AUTODEPLOY_NEST_ID}/eggs/{selected_egg_id}?include=variables", 
+    egg_info = safe_requests.get(f"{PTERODACTYL_URL}/api/application/nests/{AUTODEPLOY_NEST_ID}/eggs/{selected_egg_id}?include=variables", 
                                   headers={"Authorization": f"Bearer {PTERODACTYL_ADMIN_KEY}"}).json()
     
     
@@ -73,7 +73,7 @@ def create_project():
             return redirect(url_for('projects.home'))  # Redirect to clear form after submission
 
     # For GET requests, fetch the available eggs
-    resp = requests.get(f"{PTERODACTYL_URL}/api/application/nests/{AUTODEPLOY_NEST_ID}/eggs?include=variables", 
+    resp = safe_requests.get(f"{PTERODACTYL_URL}/api/application/nests/{AUTODEPLOY_NEST_ID}/eggs?include=variables", 
                                   headers={"Authorization": f"Bearer {PTERODACTYL_ADMIN_KEY}"})
     print(f"{PTERODACTYL_URL}/api/application/nests/{AUTODEPLOY_NEST_ID}/eggs?include=variables")
     print(resp.text)
