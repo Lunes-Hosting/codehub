@@ -30,7 +30,7 @@ def get_egg_variables():
     
     # Fetch the available eggs and their variables
     egg_info = requests.get(f"{PTERODACTYL_URL}/api/application/nests/{AUTODEPLOY_NEST_ID}/eggs/{selected_egg_id}?include=variables", 
-                                  headers={"Authorization": f"Bearer {PTERODACTYL_ADMIN_KEY}"}).json()
+                                  headers={"Authorization": f"Bearer {PTERODACTYL_ADMIN_KEY}"}, timeout=60).json()
     
     
     if egg_info:
@@ -74,7 +74,7 @@ def create_project():
 
     # For GET requests, fetch the available eggs
     resp = requests.get(f"{PTERODACTYL_URL}/api/application/nests/{AUTODEPLOY_NEST_ID}/eggs?include=variables", 
-                                  headers={"Authorization": f"Bearer {PTERODACTYL_ADMIN_KEY}"})
+                                  headers={"Authorization": f"Bearer {PTERODACTYL_ADMIN_KEY}"}, timeout=60)
     print(f"{PTERODACTYL_URL}/api/application/nests/{AUTODEPLOY_NEST_ID}/eggs?include=variables")
     print(resp.text)
     available_eggs = resp.json()['data']
